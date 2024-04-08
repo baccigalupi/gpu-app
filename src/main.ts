@@ -1,4 +1,4 @@
 import "./style.css";
-import { app } from "./app.ts";
+import { gpuApp } from "./gpuApp.ts";
 
-await app();
+await gpuApp();

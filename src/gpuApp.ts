@@ -1,6 +1,6 @@
-import { setupCanvas, Canvas } from "./app/canvas";
-import { setupDevice } from "./app/device";
-import { textureInfo, TextureInfo } from "./app/textureInfo";
+import { setupCanvas, Canvas } from "./gpuApp/canvas";
+import { setupDevice } from "./gpuApp/device";
+import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 
 export class GpuApp {
   canvas!: Canvas;
@@ -36,9 +36,12 @@ export class GpuApp {
   }
 }
 
-export const app = async () => {
-  const app = new GpuApp();
-  app.setupCanvas();
-  await app.setupDevice();
-  app.configureCanvas();
+export const gpuApp = async () => {
+  const gpuApp = new GpuApp();
+
+  gpuApp.setupCanvas();
+  await gpuApp.setupDevice();
+  gpuApp.configureCanvas();
+
+  return gpuApp;
 };
