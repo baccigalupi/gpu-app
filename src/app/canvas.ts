@@ -1,8 +1,9 @@
-export class SetupCanvas {
+export class Canvas {
   parentSelector!: string;
   element!: HTMLCanvasElement;
   width: number;
   height: number;
+  context!: GPUCanvasContext;
 
   constructor(parentSelector: string) {
     this.parentSelector = parentSelector;
@@ -33,6 +34,13 @@ export class SetupCanvas {
     return { height, width };
   }
 
+  getAdjustedDimensions() {
+    return {
+      width: this.adjustedWidth(),
+      height: this.adjustedHeight(),
+    };
+  }
+
   aspect() {
     return this.width / this.height;
   }
@@ -52,12 +60,15 @@ export class SetupCanvas {
   }
 
   getContext() {
-    return this.element.getContext("webgpu");
+    if (this.context) return this.context;
+    this.context = this.element.getContext("webgpu") as GPUCanvasContext;
+    return this.context;
   }
 }
 
 export const setupCanvas = (parentSelector: string = "#app") => {
-  const builder = new SetupCanvas(parentSelector);
-  builder.addElementToDom();
-  return builder.element;
+  const canvas = new Canvas(parentSelector);
+  canvas.addElementToDom();
+  canvas.getContext();
+  return canvas;
 };
