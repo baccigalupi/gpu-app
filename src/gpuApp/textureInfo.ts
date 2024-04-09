@@ -1,6 +1,6 @@
 import { Canvas } from "./canvas";
 
-export const defaultDepthTextureFormat = "depth24plus";
+export const defaultDepthTextureFormat = "depth24plus" as GPUTextureFormat;
 export class TextureInfo {
   device: GPUDevice;
   canvas: Canvas;

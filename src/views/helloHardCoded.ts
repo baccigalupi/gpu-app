@@ -1,6 +1,6 @@
 import { GpuApp } from "../gpuApp";
 import { setupRenderPipeline } from "../gpuApp/renderPipeline";
-import shader from "../shaders/helloHardCoded.wgsl?raw";
+import shaders from "../shaders/helloHardCoded.wgsl?raw";
 
 export const helloHardCoded = (gpuApp: GpuApp) => {
   const backgroundColor = {
@@ -9,7 +9,12 @@ export const helloHardCoded = (gpuApp: GpuApp) => {
     b: 0.2304,
     a: 1.0,
   };
-  const pipeline = setupRenderPipeline(gpuApp);
 
-  pipeline.renderLoop(shader, backgroundColor);
+  const pipeline = setupRenderPipeline({
+    gpuApp,
+    shaders,
+    backgroundColor,
+  });
+
+  pipeline.render();
 };

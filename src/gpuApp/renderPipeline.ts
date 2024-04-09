@@ -1,53 +1,94 @@
-import { GpuApp } from "../gpuApp";
+import type { GpuApp } from "../gpuApp";
+import type { Shaders } from "../gpuApp/shader";
+import { helloHardCoded } from "../views/helloHardCoded";
 import { passEncoderOperations } from "./passEncoderOperations";
-import { getPipelineDescriptor } from "./pipelineDescriptor";
+import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
+
+export type SetupRenderPipelineArguments = {
+  gpuApp: GpuApp;
+  shaders: Shaders;
+  backgroundColor?: GPUColorDict;
+};
+
+const defaultBackgroundColor = {
+  r: 0.5,
+  g: 0.5,
+  b: 0.5,
+  a: 1.0,
+};
 
 class RenderPipeline {
   gpuApp: GpuApp;
   device: GPUDevice;
   queue: GPUQueue;
-  commandEncoder: GPUCommandEncoder;
-  depthTexture: GPUTexture;
+  shaders: Shaders;
+  backgroundColor: GPUColorDict;
+  // set once per class
+  pipelineDescriptor!: PipelineDescriptor;
+  commandEncoder!: GPUCommandEncoder;
+  depthTexture!: GPUTexture;
 
+  // set once per run
   pipeline!: GPURenderPipeline;
+  passEncoder!: GPURenderPassEncoder;
 
-  constructor(gpuApp: GpuApp) {
-    this.gpuApp = gpuApp;
-    this.device = gpuApp.device;
-    this.queue = gpuApp.device.queue;
-    this.commandEncoder = this.device.createCommandEncoder();
-    this.depthTexture = this.gpuApp.getDepthTextureFormat();
+  constructor(options: SetupRenderPipelineArguments) {
+    this.gpuApp = options.gpuApp;
+    this.device = options.gpuApp.device;
+    this.shaders = options.shaders;
+    this.backgroundColor = options.backgroundColor || defaultBackgroundColor;
+    this.queue = this.gpuApp.device.queue;
+    this.setupRenderFramework();
   }
 
-  renderLoop(shader: string, backgroundColor: GPUColor) {
-    this.run(shader, backgroundColor);
+  renderLoop() {
+    this.render();
+
     requestAnimationFrame(() => {
-      this.run(shader, backgroundColor);
+      // this.update();
+      this.render();
     });
   }
 
-  run(shader: string, backgroundColor: GPUColor) {
-    const pipelineDescriptor = getPipelineDescriptor(this.gpuApp, shader);
-    this.pipeline = this.device.createRenderPipeline(pipelineDescriptor);
+  render() {
+    this.createPipeline();
+    this.createPassEncoder();
 
-    const passEncoder = this.setupEncoder(backgroundColor);
-
-    passEncoder.setPipeline(this.pipeline);
-    passEncoder.draw(3);
-    passEncoder.end();
+    this.passEncoder.draw(3);
+    this.passEncoder.end();
 
     this.queue.submit([this.commandEncoder.finish()]);
   }
 
-  setupEncoder(backgroundColor: GPUColor) {
+  setupRenderFramework() {
+    this.commandEncoder = this.device.createCommandEncoder();
+    this.depthTexture = this.gpuApp.getDepthTextureFormat();
+    this.pipelineDescriptor = pipelineDescriptor(this.gpuApp, this.shaders);
+  }
+
+  setupEncoder(backgroundColor: GPUColorDict) {
     const operations = passEncoderOperations(this.gpuApp);
+    const background = operations.background(backgroundColor);
+    background.view = this.gpuApp.context.getCurrentTexture().createView()
 
     return this.commandEncoder.beginRenderPass({
-      colorAttachments: [operations.background(backgroundColor)],
-      // depthStencilAttachment: operations.depthTesting(),
+      colorAttachments: [
+        background
+      ]
     });
+  }
+
+  createPipeline() {
+    const descriptor = this.pipelineDescriptor.build();
+    this.pipeline = this.device.createRenderPipeline(descriptor);
+  }
+
+  createPassEncoder() {
+    this.passEncoder = this.setupEncoder(this.backgroundColor);
+    this.passEncoder.setPipeline(this.pipeline);
   }
 }
 
-export const setupRenderPipeline = (gpuApp: GpuApp) =>
-  new RenderPipeline(gpuApp);
+export const setupRenderPipeline = (options: SetupRenderPipelineArguments) => {
+  return new RenderPipeline(options);
+};

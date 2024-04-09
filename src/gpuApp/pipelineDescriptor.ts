@@ -7,7 +7,7 @@ export type EntryOptions = {
 };
 
 export type DescriptorBuildOptions = {
-  backgroundColor?: GPUColor;
+  backgroundColor?: GPUColorDict;
 };
 
 export type DepthTestingOptions = {
@@ -40,23 +40,28 @@ export class PipelineDescriptor {
   depthTestingOptions: DepthTestingOptions;
   entryOptions: EntryOptions;
   buffers: GPUVertexBufferLayout[];
+  shaders: Shaders;
 
-  constructor(gpuApp: GpuApp) {
+  constructor(gpuApp: GpuApp, shaders: Shaders) {
     this.gpuApp = gpuApp;
     this.depthTesting = false;
     this.depthTestingOptions = defaultDepthTestingOptions;
     this.entryOptions = defaultEntryOptions;
     this.buffers = [] as GPUVertexBufferLayout[];
+    this.shaders = shaders;
   }
 
-  build(shaders: Shaders): GPURenderPipelineDescriptor {
-    const shaderModule = this.gpuApp.formatShader(shaders);
+  build(): GPURenderPipelineDescriptor {
+    const shaderModule = this.gpuApp.formatShader(this.shaders);
 
     return {
       vertex: this.buildVertex(shaderModule),
       fragment: this.buildFragment(shaderModule),
       layout: "auto",
       ...this.buildDepthTesting(),
+      primitive: {
+        topology: 'triangle-list',
+      },
     };
   }
 
@@ -112,8 +117,8 @@ export class PipelineDescriptor {
   }
 }
 
-export const pipelineDescriptor = (gpuApp: GpuApp) => {
-  return new PipelineDescriptor(gpuApp);
+export const pipelineDescriptor = (gpuApp: GpuApp, shaders: Shaders) => {
+  return new PipelineDescriptor(gpuApp, shaders);
 };
 
 export const getPipelineDescriptor = (

@@ -7,9 +7,9 @@ export class PassEncoderOperations {
     this.gpuApp = gpuApp;
   }
 
-  background(backgroundColor: GPUColor): GPURenderPassColorAttachment {
+  background(backgroundColor: GPUColorDict): GPURenderPassColorAttachment {
     return {
-      view: this.gpuApp.getCurrentTexture().createView(),
+      view: this.gpuApp.getCurrentTexture().createView(), // This doesn't work??
       clearValue: backgroundColor,
       loadOp: "clear",
       storeOp: "store",
