@@ -1,6 +1,7 @@
 import { setupCanvas, Canvas } from "./gpuApp/canvas";
 import { setupDevice } from "./gpuApp/device";
 import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
+import { Shader, Shaders } from "./gpuApp/shader";
 
 export class GpuApp {
   canvas!: Canvas;
@@ -27,12 +28,33 @@ export class GpuApp {
     return this.textureInfo;
   }
 
+  getFormat() {
+    return this.getTextureInfo().getFormat();
+  }
+
+  getDepthTextureFormat() {
+    return this.getTextureInfo().getDepthTextureFormat();
+  }
+
+  getCurrentTexture() {
+    return this.getTextureInfo().getDepthTextureFormat();
+  }
+
   configureCanvas() {
     this.context.configure({
       device: this.device,
-      format: this.getTextureInfo().getFormat(),
+      format: this.getFormat(),
       alphaMode: "premultiplied",
     });
+  }
+
+  formatShader(code: Shaders) {
+    return new Shader(this.device).format(code);
+  }
+
+  onCanvasResize() {
+    this.canvas.resize();
+    this.textureInfo.resetDepthTexture();
   }
 }
 

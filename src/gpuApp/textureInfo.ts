@@ -1,5 +1,6 @@
 import { Canvas } from "./canvas";
 
+export const defaultDepthTextureFormat = "depth24plus";
 export class TextureInfo {
   device: GPUDevice;
   canvas: Canvas;
@@ -26,7 +27,7 @@ export class TextureInfo {
     return this.context.getCurrentTexture();
   }
 
-  getDepthTextureFormat() {
+  getDepthTextureFormat(format = defaultDepthTextureFormat) {
     // NOTE: this has to be memoized to avoid memory overrun. It also needs to
     // be reset when resizing the canvas.
     if (this.depthTextureFormat) return this.depthTextureFormat;
@@ -35,7 +36,7 @@ export class TextureInfo {
 
     this.depthTextureFormat = this.device.createTexture({
       size: [width, height],
-      format: "depth24plus",
+      format,
       usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
 
