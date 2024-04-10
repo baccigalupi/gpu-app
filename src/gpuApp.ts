@@ -2,6 +2,14 @@ import { setupCanvas, Canvas } from "./gpuApp/canvas";
 import { setupDevice } from "./gpuApp/device";
 import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 import { Shader, Shaders } from "./gpuApp/shader";
+import { setupRenderPipeline } from "./gpuApp/renderPipeline";
+
+const defaultBackgroundColor = {
+  r: 0.5,
+  g: 0.5,
+  b: 0.5,
+  a: 1.0,
+};
 
 export class GpuApp {
   canvas!: Canvas;
@@ -55,6 +63,14 @@ export class GpuApp {
   onCanvasResize() {
     this.canvas.resize();
     this.textureInfo.resetDepthTexture();
+  }
+
+  setupRendering(options: {shaders: Shaders, backgroundColor: GPUColorDict | null }) {
+    return setupRenderPipeline({
+      gpuApp: this,
+      shaders: options.shaders,
+      backgroundColor: options.backgroundColor || defaultBackgroundColor
+    })
   }
 }
 
