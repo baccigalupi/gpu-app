@@ -1,5 +1,6 @@
 import type { GpuApp } from "../gpuApp";
 import type { Shaders } from "../gpuApp/shader";
+import { OnFrameRateUpdate, FrameRateCalculator } from "./frameRate";
 import { passEncoderOperations } from "./passEncoderOperations";
 import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
 
@@ -25,14 +26,16 @@ class RenderPipeline {
   queue: GPUQueue;
   shaders: Shaders;
   backgroundColor: GPUColorDict;
+  includeStats: boolean;
   // set once per class
   pipelineDescriptor!: PipelineDescriptor;
-  commandEncoder!: GPUCommandEncoder;
   depthTexture!: GPUTexture;
 
   // set once per run
+  commandEncoder!: GPUCommandEncoder;
   pipeline!: GPURenderPipeline;
   passEncoder!: GPURenderPassEncoder;
+  frameRateCalculator!: FrameRateCalculator;
 
   constructor(options: SetupRenderPipelineArguments) {
     this.gpuApp = options.gpuApp;
@@ -40,7 +43,13 @@ class RenderPipeline {
     this.shaders = options.shaders;
     this.backgroundColor = options.backgroundColor || defaultBackgroundColor;
     this.queue = this.gpuApp.device.queue;
+    this.includeStats = false;
     this.setupRenderFramework();
+  }
+
+  calculateStats(onUpdate: OnFrameRateUpdate) {
+    this.includeStats = true;
+    this.frameRateCalculator = new FrameRateCalculator(onUpdate);
   }
 
   renderLoop(onUpdate: PipelineOnUpdate) {
@@ -51,6 +60,7 @@ class RenderPipeline {
   }
 
   render(onUpdate: PipelineOnUpdate = nullUpdater) {
+    if (this.includeStats) this.frameRateCalculator.update();
     onUpdate(this);
 
     this.createCommandEncoder();
