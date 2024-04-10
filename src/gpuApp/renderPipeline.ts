@@ -57,7 +57,7 @@ class RenderPipeline {
     this.createPipeline();
     this.createPassEncoder();
 
-    this.passEncoder.draw(0);
+    this.passEncoder.draw(3);
     this.passEncoder.end();
 
     this.queue.submit([this.commandEncoder.finish()]);

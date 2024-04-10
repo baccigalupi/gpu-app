@@ -11,5 +11,5 @@ fn vertex_entry(@builtin(vertex_index) index : u32) -> @builtin(position) vec4f 
 
 @fragment
 fn fragment_entry() -> @location(0) vec4f {
-  return vec4(0.5, 0.5, 0.5, 0.5);
+  return vec4(0.5, 0.5, 0.5, 1.0);
 }

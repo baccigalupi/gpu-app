@@ -120,26 +120,3 @@ export class PipelineDescriptor {
 export const pipelineDescriptor = (gpuApp: GpuApp, shaders: Shaders) => {
   return new PipelineDescriptor(gpuApp, shaders);
 };
-
-export const getPipelineDescriptor = (
-  gpuApp: GpuApp,
-  shader: string,
-): GPURenderPipelineDescriptor => {
-  return {
-    vertex: {
-      module: gpuApp.formatShader(shader),
-      entryPoint: "vertex_entry",
-      buffers: [],
-    },
-    fragment: {
-      module: gpuApp.formatShader(shader),
-      entryPoint: "fragment_entry",
-      targets: [{ format: gpuApp.getFormat() }],
-    },
-    primitive: {
-      topology: "triangle-list",
-      // cullMode: 'back',
-    },
-    layout: "auto",
-  };
-};
