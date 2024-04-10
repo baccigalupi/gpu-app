@@ -51,7 +51,7 @@ export class FrameRateUi {
 
   shouldDelay() {
     const now = performance.now();
-    return now - this.lastUpdated < 70;
+    return now - this.lastUpdated < 100;
   }
 }
 

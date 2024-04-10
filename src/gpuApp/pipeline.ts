@@ -1,17 +1,17 @@
 import type { GpuApp } from "../gpuApp";
-import type { Shaders } from "../gpuApp/shader";
+import type { Shaders } from "./shader";
 import { OnFrameRateUpdate, FrameRateCalculator } from "./frameRate";
 import { passEncoderOperations } from "./passEncoderOperations";
 import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
 
-export type SetupRenderPipelineArguments = {
+export type PipelineArguments = {
   gpuApp: GpuApp;
   shaders: Shaders;
   backgroundColor?: GPUColorDict;
 };
 
-export type PipelineOnUpdate = (pipeline: RenderPipeline) => void
-const nullUpdater = (_pipeline: RenderPipeline) => {}
+export type PipelineOnUpdate = (pipeline: Pipeline) => void
+const nullUpdater = (_pipeline: Pipeline) => {}
 
 const defaultBackgroundColor = {
   r: 0.5,
@@ -20,31 +20,34 @@ const defaultBackgroundColor = {
   a: 1.0,
 };
 
-class RenderPipeline {
+export class Pipeline {
   gpuApp: GpuApp;
   device: GPUDevice;
   queue: GPUQueue;
   shaders: Shaders;
   backgroundColor: GPUColorDict;
   includeStats: boolean;
-  // set once per class
-  pipelineDescriptor!: PipelineDescriptor;
-  depthTexture!: GPUTexture;
+  vertexCount: number;
 
-  // set once per run
+  pipelineDescriptor: PipelineDescriptor;
+  depthTexture: GPUTexture;
+
+  // set once per frame
   commandEncoder!: GPUCommandEncoder;
   pipeline!: GPURenderPipeline;
   passEncoder!: GPURenderPassEncoder;
   frameRateCalculator!: FrameRateCalculator;
 
-  constructor(options: SetupRenderPipelineArguments) {
+  constructor(options: PipelineArguments) {
     this.gpuApp = options.gpuApp;
     this.device = options.gpuApp.device;
     this.shaders = options.shaders;
     this.backgroundColor = options.backgroundColor || defaultBackgroundColor;
     this.queue = this.gpuApp.device.queue;
     this.includeStats = false;
-    this.setupRenderFramework();
+    this.depthTexture = this.gpuApp.getDepthTextureFormat();
+    this.pipelineDescriptor = pipelineDescriptor(this.gpuApp, this.shaders);
+    this.vertexCount = 0; // TODO: make it based on data
   }
 
   calculateStats(onUpdate: OnFrameRateUpdate) {
@@ -60,34 +63,35 @@ class RenderPipeline {
   }
 
   render(onUpdate: PipelineOnUpdate = nullUpdater) {
-    if (this.includeStats) this.frameRateCalculator.update();
-    onUpdate(this);
+    this.update(onUpdate);
 
-    this.createCommandEncoder();
-    this.createPipeline();
-    this.createPassEncoder();
+    this.createFrameResources();
 
-    this.passEncoder.draw(3);
+    this.passEncoder.draw(this.vertexCount);
     this.passEncoder.end();
 
     this.queue.submit([this.commandEncoder.finish()]);
   }
 
-  setupRenderFramework() {
-    this.depthTexture = this.gpuApp.getDepthTextureFormat();
-    this.pipelineDescriptor = pipelineDescriptor(this.gpuApp, this.shaders);
+  overrideVertexCount(count: number) {
+    this.vertexCount = count;
   }
 
-  setupEncoder() {
-    const operations = passEncoderOperations(this.gpuApp);
-    const background = operations.background(this.backgroundColor);
-    background.view = this.gpuApp.context.getCurrentTexture().createView()
+  // -- private, maybe different class
 
-    return this.commandEncoder.beginRenderPass({
-      colorAttachments: [
-        background
-      ]
-    });
+  update(onUpdate: PipelineOnUpdate) {
+    if (this.includeStats) this.frameRateCalculator.update();
+    onUpdate(this);
+  }
+
+  createFrameResources() {
+    this.createCommandEncoder();
+    this.createPipeline();
+    this.createPassEncoder();
+  }
+
+  setupPerAppResources() {
+    
   }
 
   createCommandEncoder() {
@@ -103,8 +107,16 @@ class RenderPipeline {
     this.passEncoder = this.setupEncoder();
     this.passEncoder.setPipeline(this.pipeline);
   }
-}
 
-export const setupRenderPipeline = (options: SetupRenderPipelineArguments) => {
-  return new RenderPipeline(options);
-};
+  setupEncoder() {
+    const operations = passEncoderOperations(this.gpuApp);
+    const background = operations.background(this.backgroundColor);
+    background.view = this.gpuApp.context.getCurrentTexture().createView()
+
+    return this.commandEncoder.beginRenderPass({
+      colorAttachments: [
+        background
+      ]
+    });
+  }
+}

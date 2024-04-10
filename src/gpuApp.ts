@@ -2,7 +2,7 @@ import { setupCanvas, Canvas } from "./gpuApp/canvas";
 import { setupDevice } from "./gpuApp/device";
 import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 import { Shader, Shaders } from "./gpuApp/shader";
-import { setupRenderPipeline } from "./gpuApp/renderPipeline";
+import { Pipeline } from "./gpuApp/pipeline";
 
 const defaultBackgroundColor = {
   r: 0.5,
@@ -66,11 +66,11 @@ export class GpuApp {
   }
 
   setupRendering(options: {shaders: Shaders, backgroundColor: GPUColorDict | null }) {
-    return setupRenderPipeline({
+    return new Pipeline({
       gpuApp: this,
       shaders: options.shaders,
       backgroundColor: options.backgroundColor || defaultBackgroundColor
-    })
+    });
   }
 }
 

@@ -1,9 +1,6 @@
 import "./style.css";
 import { gpuApp } from "./gpuApp.ts";
-import { dynamicBackground } from "./examples/background/dynamicViaAttatchment.ts";
+import { render } from "./examples/backgroundAttachment/index.ts";
 
 const gpu = await gpuApp();
-
-dynamicBackground(gpu);
-
-// listen for input
+render(gpu);
