@@ -1,29 +1,25 @@
-import { GpuApp } from "../gpuApp";
-import { setupRenderPipeline } from "../gpuApp/renderPipeline";
-import shaders from "../shaders/helloHardCoded.wgsl?raw";
-
-const backgroundColor = {
+const defaultBackgroundColor = {
   r: 0.1172,
   g: 0.1602,
   b: 0.2304,
   a: 1.0,
 };
 
-type ColorRates = {
+export type ColorRates = {
   r: number;
   g: number;
   b: number;
 }
 
-const rateReducer = 100;
+const rateReducer = 500;
 
-class ColorShifter {
+export class ColorShifter {
   color: GPUColorDict;
   nextColor: GPUColorDict;
 
   rates: ColorRates;
 
-  constructor(initialColor: GPUColorDict = backgroundColor) {
+  constructor(initialColor: GPUColorDict = defaultBackgroundColor) {
     this.color = initialColor;
     this.nextColor = initialColor;
     this.rates = {
@@ -81,17 +77,3 @@ class ColorShifter {
     return value > 1 || value < 0
   }
 }
-
-export const helloHardCoded = (gpuApp: GpuApp) => {
-  const colorShifter = new ColorShifter();
-
-  const pipeline = setupRenderPipeline({
-    gpuApp,
-    shaders,
-    backgroundColor: colorShifter.color,
-  });
-
-  pipeline.renderLoop(() => {
-    pipeline.backgroundColor = colorShifter.update();
-  });
-};

@@ -64,6 +64,7 @@ export const gpuApp = async () => {
   gpuApp.setupCanvas();
   await gpuApp.setupDevice();
   gpuApp.configureCanvas();
+  window.addEventListener('resize', () => gpuApp.onCanvasResize());
 
   return gpuApp;
 };

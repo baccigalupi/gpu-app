@@ -1,10 +1,9 @@
 import "./style.css";
 import { gpuApp } from "./gpuApp.ts";
-import { helloHardCoded } from "./views/helloHardCoded.ts";
+import { dynamicBackground } from "./examples/background/dynamicViaAttatchment.ts";
 
 const gpu = await gpuApp();
 
-helloHardCoded(gpu);
+dynamicBackground(gpu);
 
-window.addEventListener('resize', () => gpu.onCanvasResize())
 // listen for input
