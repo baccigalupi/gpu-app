@@ -9,6 +9,9 @@ export type SetupRenderPipelineArguments = {
   backgroundColor?: GPUColorDict;
 };
 
+export type PipelineOnUpdate = (pipeline: RenderPipeline) => void
+const nullUpdater = (_pipeline: RenderPipeline) => {}
+
 const defaultBackgroundColor = {
   r: 0.5,
   g: 0.5,
@@ -40,20 +43,21 @@ class RenderPipeline {
     this.setupRenderFramework();
   }
 
-  renderLoop() {
-    this.render();
-
+  renderLoop(onUpdate: PipelineOnUpdate) {
     requestAnimationFrame(() => {
-      this.render();
+      this.render(onUpdate);
+      this.renderLoop(onUpdate);
     });
   }
 
-  render() {
+  render(onUpdate: PipelineOnUpdate = nullUpdater) {
+    onUpdate(this);
+
     this.createCommandEncoder();
     this.createPipeline();
     this.createPassEncoder();
 
-    this.passEncoder.draw(3);
+    this.passEncoder.draw(0);
     this.passEncoder.end();
 
     this.queue.submit([this.commandEncoder.finish()]);
