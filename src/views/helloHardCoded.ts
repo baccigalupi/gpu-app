@@ -16,5 +16,5 @@ export const helloHardCoded = (gpuApp: GpuApp) => {
     backgroundColor,
   });
 
-  pipeline.render();
+  pipeline.renderLoop();
 };

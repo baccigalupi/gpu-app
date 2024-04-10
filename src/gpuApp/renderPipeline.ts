@@ -1,6 +1,5 @@
 import type { GpuApp } from "../gpuApp";
 import type { Shaders } from "../gpuApp/shader";
-import { helloHardCoded } from "../views/helloHardCoded";
 import { passEncoderOperations } from "./passEncoderOperations";
 import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
 
@@ -45,12 +44,12 @@ class RenderPipeline {
     this.render();
 
     requestAnimationFrame(() => {
-      // this.update();
       this.render();
     });
   }
 
   render() {
+    this.createCommandEncoder();
     this.createPipeline();
     this.createPassEncoder();
 
@@ -61,14 +60,13 @@ class RenderPipeline {
   }
 
   setupRenderFramework() {
-    this.commandEncoder = this.device.createCommandEncoder();
     this.depthTexture = this.gpuApp.getDepthTextureFormat();
     this.pipelineDescriptor = pipelineDescriptor(this.gpuApp, this.shaders);
   }
 
-  setupEncoder(backgroundColor: GPUColorDict) {
+  setupEncoder() {
     const operations = passEncoderOperations(this.gpuApp);
-    const background = operations.background(backgroundColor);
+    const background = operations.background(this.backgroundColor);
     background.view = this.gpuApp.context.getCurrentTexture().createView()
 
     return this.commandEncoder.beginRenderPass({
@@ -78,13 +76,17 @@ class RenderPipeline {
     });
   }
 
+  createCommandEncoder() {
+    this.commandEncoder = this.device.createCommandEncoder();
+  }
+
   createPipeline() {
     const descriptor = this.pipelineDescriptor.build();
     this.pipeline = this.device.createRenderPipeline(descriptor);
   }
 
   createPassEncoder() {
-    this.passEncoder = this.setupEncoder(this.backgroundColor);
+    this.passEncoder = this.setupEncoder();
     this.passEncoder.setPipeline(this.pipeline);
   }
 }
