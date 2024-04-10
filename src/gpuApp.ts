@@ -65,11 +65,14 @@ export class GpuApp {
     this.textureInfo.resetDepthTexture();
   }
 
-  setupRendering(options: {shaders: Shaders, backgroundColor: GPUColorDict | null }) {
+  setupRendering(options: {
+    shaders: Shaders;
+    backgroundColor: GPUColorDict | null;
+  }) {
     return new Pipeline({
       gpuApp: this,
       shaders: options.shaders,
-      backgroundColor: options.backgroundColor || defaultBackgroundColor
+      backgroundColor: options.backgroundColor || defaultBackgroundColor,
     });
   }
 }
@@ -80,7 +83,7 @@ export const gpuApp = async () => {
   gpuApp.setupCanvas();
   await gpuApp.setupDevice();
   gpuApp.configureCanvas();
-  window.addEventListener('resize', () => gpuApp.onCanvasResize());
+  window.addEventListener("resize", () => gpuApp.onCanvasResize());
 
   return gpuApp;
 };

@@ -9,7 +9,7 @@ export type ColorRates = {
   r: number;
   g: number;
   b: number;
-}
+};
 
 const rateReducer = 500;
 
@@ -25,8 +25,8 @@ export class ColorShifter {
     this.rates = {
       r: Math.random() / rateReducer,
       g: Math.random() / rateReducer,
-      b: Math.random() / rateReducer
-    }
+      b: Math.random() / rateReducer,
+    };
   }
 
   update() {
@@ -36,9 +36,9 @@ export class ColorShifter {
       this.toggleRates();
       this.calculateNextColor();
     }
-    
+
     this.color = this.nextColor;
-    
+
     return this.color;
   }
 
@@ -52,7 +52,7 @@ export class ColorShifter {
       r,
       g,
       b,
-    }
+    };
   }
 
   nextOutOfBounds() {
@@ -60,7 +60,7 @@ export class ColorShifter {
       this.valueOutOfBound(this.nextColor.r) ||
       this.valueOutOfBound(this.nextColor.g) ||
       this.valueOutOfBound(this.nextColor.b)
-    )
+    );
   }
 
   toggleRates() {
@@ -74,6 +74,6 @@ export class ColorShifter {
   }
 
   valueOutOfBound(value: number) {
-    return value > 1 || value < 0
+    return value > 1 || value < 0;
   }
 }

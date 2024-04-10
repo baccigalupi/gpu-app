@@ -60,7 +60,7 @@ export class PipelineDescriptor {
       layout: "auto",
       ...this.buildDepthTesting(),
       primitive: {
-        topology: 'triangle-list',
+        topology: "triangle-list",
       },
     };
   }

@@ -1,16 +1,16 @@
 const template = `
   Frames per second: <span></span>
-`
+`;
 
 const styles: Record<string, string> = {
-  position: 'absolute',
-  right: '0',
-  top: '0',
-  width: '200px',
-  height: '30px',
-  "background-color": 'black',
+  position: "absolute",
+  right: "0",
+  top: "0",
+  width: "200px",
+  height: "30px",
+  "background-color": "black",
   padding: "5px 0 0 20px",
-}
+};
 
 export class FrameRateUi {
   container: HTMLDivElement;
@@ -29,13 +29,15 @@ export class FrameRateUi {
 
   buildElement() {
     this.container.innerHTML = template;
-    
-    const cssStyles = Object.keys(styles).map((key: string) => {
-      return `${key}: ${styles[key]}`;
-    }).join(";")
+
+    const cssStyles = Object.keys(styles)
+      .map((key: string) => {
+        return `${key}: ${styles[key]}`;
+      })
+      .join(";");
 
     this.container.style.cssText = cssStyles;
-    this.span = this.container.querySelector('span');
+    this.span = this.container.querySelector("span");
   }
 
   appendToBody() {
@@ -59,4 +61,4 @@ export const addFrameRate = () => {
   const ui = new FrameRateUi();
   ui.setup();
   return ui;
-}
+};

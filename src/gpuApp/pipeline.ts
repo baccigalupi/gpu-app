@@ -10,8 +10,8 @@ export type PipelineArguments = {
   backgroundColor?: GPUColorDict;
 };
 
-export type PipelineOnUpdate = (pipeline: Pipeline) => void
-const nullUpdater = (_pipeline: Pipeline) => {}
+export type PipelineOnUpdate = (pipeline: Pipeline) => void;
+const nullUpdater = (_pipeline: Pipeline) => {};
 
 const defaultBackgroundColor = {
   r: 0.5,
@@ -55,7 +55,7 @@ export class Pipeline {
     this.frameRateCalculator = new FrameRateCalculator(onUpdate);
   }
 
-  renderLoop(onUpdate: PipelineOnUpdate) {
+  renderLoop(onUpdate: PipelineOnUpdate = nullUpdater) {
     requestAnimationFrame(() => {
       this.render(onUpdate);
       this.renderLoop(onUpdate);
@@ -90,9 +90,7 @@ export class Pipeline {
     this.createPassEncoder();
   }
 
-  setupPerAppResources() {
-    
-  }
+  setupPerAppResources() {}
 
   createCommandEncoder() {
     this.commandEncoder = this.device.createCommandEncoder();
@@ -111,12 +109,10 @@ export class Pipeline {
   setupEncoder() {
     const operations = passEncoderOperations(this.gpuApp);
     const background = operations.background(this.backgroundColor);
-    background.view = this.gpuApp.context.getCurrentTexture().createView()
+    background.view = this.gpuApp.context.getCurrentTexture().createView();
 
     return this.commandEncoder.beginRenderPass({
-      colorAttachments: [
-        background
-      ]
+      colorAttachments: [background],
     });
   }
 }
