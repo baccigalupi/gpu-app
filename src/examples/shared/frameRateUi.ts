@@ -3,23 +3,19 @@ const template = `
 `;
 
 const styles: Record<string, string> = {
-  position: "absolute",
-  right: "0",
-  top: "0",
-  width: "200px",
-  height: "30px",
-  "background-color": "black",
-  padding: "5px 0 0 20px",
+  padding: "20px",
 };
 
 export class FrameRateUi {
   container: HTMLDivElement;
   span!: HTMLSpanElement | null;
+  parentElement: HTMLElement;
   lastUpdated: number;
 
-  constructor() {
+  constructor(parentSelector: string = "#controls") {
     this.container = document.createElement("div");
     this.lastUpdated = 0;
+    this.parentElement = document.querySelector(parentSelector) || document.body;
   }
 
   setup() {
@@ -41,7 +37,7 @@ export class FrameRateUi {
   }
 
   appendToBody() {
-    document.body.append(this.container);
+    this.parentElement.append(this.container);
   }
 
   update(frameRate: number) {

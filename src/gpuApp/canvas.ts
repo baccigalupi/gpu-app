@@ -66,7 +66,7 @@ export class Canvas {
   }
 }
 
-export const setupCanvas = (parentSelector: string = "#app") => {
+export const setupCanvas = (parentSelector = "#app") => {
   const canvas = new Canvas(parentSelector);
   canvas.addElementToDom();
   canvas.getContext();

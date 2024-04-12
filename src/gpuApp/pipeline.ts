@@ -8,7 +8,14 @@ export type PipelineArguments = {
   gpuApp: GpuApp;
   shaders: Shaders;
   backgroundColor?: GPUColorDict;
+  buffers?: any[];
 };
+
+export type SetupPipelineArguments = {
+  shaders: Shaders;
+  backgroundColor?: GPUColorDict;
+  buffers?: any[];
+}
 
 export type PipelineOnUpdate = (pipeline: Pipeline) => void;
 const nullUpdater = (_pipeline: Pipeline) => {};
@@ -27,6 +34,7 @@ export class Pipeline {
   shaders: Shaders;
   backgroundColor: GPUColorDict;
   includeStats: boolean;
+  buffers: any[];
   vertexCount: number;
 
   pipelineDescriptor: PipelineDescriptor;
@@ -41,13 +49,17 @@ export class Pipeline {
   constructor(options: PipelineArguments) {
     this.gpuApp = options.gpuApp;
     this.device = options.gpuApp.device;
+    this.queue = this.gpuApp.device.queue;
+    this.depthTexture = this.gpuApp.getDepthTextureFormat();
+
     this.shaders = options.shaders;
     this.backgroundColor = options.backgroundColor || defaultBackgroundColor;
-    this.queue = this.gpuApp.device.queue;
+
+    this.buffers = options.buffers || [];
+    this.vertexCount = this.buffers.length;
+    this.pipelineDescriptor = this.setupDescriptor();
+
     this.includeStats = false;
-    this.depthTexture = this.gpuApp.getDepthTextureFormat();
-    this.pipelineDescriptor = pipelineDescriptor(this.gpuApp, this.shaders);
-    this.vertexCount = 0; // TODO: make it based on data
   }
 
   calculateStats(onUpdate: OnFrameRateUpdate) {
@@ -67,6 +79,8 @@ export class Pipeline {
 
     this.createFrameResources();
 
+    this.setupBindGroups();
+
     this.passEncoder.draw(this.vertexCount);
     this.passEncoder.end();
 
@@ -81,7 +95,9 @@ export class Pipeline {
 
   update(onUpdate: PipelineOnUpdate) {
     if (this.includeStats) this.frameRateCalculator.update();
+  
     onUpdate(this);
+    // this.buffers.update(); // pass delta time?
   }
 
   createFrameResources() {
@@ -90,7 +106,20 @@ export class Pipeline {
     this.createPassEncoder();
   }
 
-  setupPerAppResources() {}
+  setupBindGroups() {
+    if (!this.buffers.length) return;
+
+    const uniform = this.buffers[0];
+    uniform.writeToGpu();
+    const uniformsBindGroup = this.device.createBindGroup({
+      layout: this.pipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: uniform.buffer() }},
+      ],
+    });
+
+    this.passEncoder.setBindGroup(0, uniformsBindGroup);
+  }
 
   createCommandEncoder() {
     this.commandEncoder = this.device.createCommandEncoder();
@@ -108,11 +137,16 @@ export class Pipeline {
 
   setupEncoder() {
     const operations = passEncoderOperations(this.gpuApp);
+
     const background = operations.background(this.backgroundColor);
     background.view = this.gpuApp.context.getCurrentTexture().createView();
 
     return this.commandEncoder.beginRenderPass({
       colorAttachments: [background],
     });
+  }
+
+  setupDescriptor() {
+    return pipelineDescriptor(this.gpuApp, this.shaders);
   }
 }

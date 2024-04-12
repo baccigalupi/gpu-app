@@ -2,7 +2,7 @@ import { setupCanvas, Canvas } from "./gpuApp/canvas";
 import { setupDevice } from "./gpuApp/device";
 import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 import { Shader, Shaders } from "./gpuApp/shader";
-import { Pipeline } from "./gpuApp/pipeline";
+import { Pipeline, SetupPipelineArguments } from "./gpuApp/pipeline";
 
 const defaultBackgroundColor = {
   r: 0.5,
@@ -11,15 +11,17 @@ const defaultBackgroundColor = {
   a: 1.0,
 };
 
+const defaultCanvasParentSelector = "#app";
+
 export class GpuApp {
   canvas!: Canvas;
   context!: GPUCanvasContext;
   device!: GPUDevice;
   textureInfo!: TextureInfo;
 
-  setupCanvas() {
+  setupCanvas(parentSelector = defaultCanvasParentSelector) {
     if (this.canvas) return this.canvas;
-    this.canvas = setupCanvas();
+    this.canvas = setupCanvas(parentSelector);
     this.context = this.canvas.context;
     return this.canvas;
   }
@@ -65,22 +67,20 @@ export class GpuApp {
     this.textureInfo.resetDepthTexture();
   }
 
-  setupRendering(options: {
-    shaders: Shaders;
-    backgroundColor: GPUColorDict | null;
-  }) {
+  setupRendering(options: SetupPipelineArguments) {
     return new Pipeline({
       gpuApp: this,
       shaders: options.shaders,
       backgroundColor: options.backgroundColor || defaultBackgroundColor,
+      buffers: options.buffers,
     });
   }
 }
 
-export const gpuApp = async () => {
+export const gpuApp = async (options: {parentSelector?: string} = {}) => {
   const gpuApp = new GpuApp();
 
-  gpuApp.setupCanvas();
+  gpuApp.setupCanvas(options.parentSelector || defaultCanvasParentSelector);
   await gpuApp.setupDevice();
   gpuApp.configureCanvas();
   window.addEventListener("resize", () => gpuApp.onCanvasResize());
