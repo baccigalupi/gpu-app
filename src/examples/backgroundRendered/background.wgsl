@@ -1,3 +1,7 @@
+fn premultiply(color: vec4f) -> vec4f {
+  return vec4f(color.rgb * color.a, color.a);
+}
+
 struct Uniforms {
   backgroundColor : vec4f,
 }
@@ -20,5 +24,5 @@ fn vertex_entry(@builtin(vertex_index) index : u32) -> @builtin(position) vec4f 
 
 @fragment
 fn fragment_entry() -> @location(0) vec4f {
-  return uniforms.backgroundColor;
+  return premultiply(uniforms.backgroundColor);
 }

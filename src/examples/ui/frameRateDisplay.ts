@@ -2,11 +2,7 @@ const template = `
   Frames per second: <span></span>
 `;
 
-const styles: Record<string, string> = {
-  padding: "20px",
-};
-
-export class FrameRateUi {
+export class FrameRateDisplay {
   container: HTMLDivElement;
   span!: HTMLSpanElement | null;
   parentElement: HTMLElement;
@@ -24,15 +20,8 @@ export class FrameRateUi {
   }
 
   buildElement() {
+    this.container.id = "framerate-display";
     this.container.innerHTML = template;
-
-    const cssStyles = Object.keys(styles)
-      .map((key: string) => {
-        return `${key}: ${styles[key]}`;
-      })
-      .join(";");
-
-    this.container.style.cssText = cssStyles;
     this.span = this.container.querySelector("span");
   }
 
@@ -47,14 +36,18 @@ export class FrameRateUi {
     this.lastUpdated = performance.now();
   }
 
+  updater() {
+    return (frameRate: number) => this.update(frameRate);
+  }
+
   shouldDelay() {
     const now = performance.now();
     return now - this.lastUpdated < 100;
   }
 }
 
-export const addFrameRate = () => {
-  const ui = new FrameRateUi();
+export const addFrameRate = (parentSelector: string = "#controls") => {
+  const ui = new FrameRateDisplay(parentSelector);
   ui.setup();
   return ui;
 };

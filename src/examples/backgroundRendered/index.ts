@@ -1,22 +1,18 @@
 import type { GpuApp } from "../../gpuApp";
-import { addFrameRate } from "../shared/frameRateUi";
-import { ColorShifter } from "../shared/colorShifter";
+import type { FrameRateDisplay } from "../ui/frameRateDisplay";
+import type { UiData } from "../ui/uiData";
+import { ColorShifter, colorDictToArray } from "../shared/colorShifter";
 import { Uniform } from '../../gpuApp/buffers/uniform';
-import shaders from "./shader.wgsl?raw";
+import shaders from "./background.wgsl?raw";
 
-const colorDictToArray = (colorDict: GPUColorDict): number[] => {
-  return [colorDict.r, colorDict.g, colorDict.b, colorDict.a];
-}
+const alpha = 0.95;
 
-export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp) => {
+export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp, FrameRateDisplay: FrameRateDisplay, uiData: UiData) => {
   const colorShifter = new ColorShifter();
   const colorUniform = new Uniform(
-    colorDictToArray(colorShifter.color),
+    colorDictToArray(colorShifter.color, alpha),
     gpuApp,
-    { label: 'uniform: background color' }
   )
-  // const backgroundColor = new Uniform();
-  const frameRateUi = addFrameRate();
 
   const pipeline = gpuApp.setupRendering({
     shaders,
@@ -24,10 +20,10 @@ export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp) => {
     buffers: [colorUniform],
   });
 
-  pipeline.calculateStats((frameRate: number) => frameRateUi.update(frameRate));
+  pipeline.calculateStats(FrameRateDisplay.updater());
   pipeline.overrideVertexCount(6);
 
   pipeline.renderLoop(() => {
-    colorUniform.data = colorDictToArray(colorShifter.update());
+    colorUniform.data = colorDictToArray(colorShifter.update(), alpha);
   });
 };

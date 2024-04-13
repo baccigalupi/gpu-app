@@ -52,3 +52,8 @@ canvas {
   background-size: 32px 32px;
   background-position: 0 0, 0 16px, 16px -16px, -16px 0px;
 }
+
+
+#opacity-controls, #framerate-display {
+  margin: 20px;
+}
