@@ -9,14 +9,12 @@ export class UiData {
     this.data[key] = value;
   }
 
-  updater(key: string) {
+  updater() {
     return ({ target } : Event) => {
       if (!target) return;
 
-      this.update(
-        key,
-        (target as HTMLInputElement).value
-      );
+      const input = target as HTMLInputElement;
+      this.update(input.name, input.value);
     }
   }
 

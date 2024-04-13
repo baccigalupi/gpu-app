@@ -1,4 +1,5 @@
 import type { UiData } from "./uiData";
+
 const template = `
   <form action="javascript:void(0)">
     <fieldset>
@@ -10,6 +11,11 @@ const template = `
       <div>
         <input type="radio" name="alphaMode" value="opaque" id="alpha-opaque"/>
         <label for="alpha-opaque">opaque</label>
+      </div>
+
+      <div class="form-group">
+        <label for='alhpa'>Alpha value<label>
+        <input type="range" name="alphaValue" id="alphaValue" min="0.0" max="1.0" value="0.95" step="0.01" />
       </div>
     </fieldset>
   </form>
@@ -35,14 +41,18 @@ export class OpacityControls {
   setup() {
     this.buildElement();
     this.appendToBody();
+    this.listenOnInputs();
   }
 
   buildElement() {
     this.container.id = "opacity-controls";
     this.container.innerHTML = template;
+  }
+
+  listenOnInputs() {
     const inputs = this.container.querySelectorAll("input");
     inputs.forEach((input) => {
-      input.addEventListener('change', this.uiData.updater('canvasAlphaMode'));
+      input.addEventListener('change', this.uiData.updater());
     });
   }
 
