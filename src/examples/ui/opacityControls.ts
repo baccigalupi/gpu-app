@@ -14,7 +14,7 @@ const template = `
       </div>
 
       <div class="form-group">
-        <label for='alhpa'>Alpha value<label>
+        <label for='alhpa'>Alpha value <span id="alpha-display">0.95</span><label><br>
         <input type="range" name="alphaValue" id="alphaValue" min="0.0" max="1.0" value="0.95" step="0.01" />
       </div>
     </fieldset>
@@ -29,6 +29,7 @@ type OpacityControlsOptions = {
 export class OpacityControls {
   container: HTMLDivElement;
   parentElement: HTMLElement;
+  alphaDisplay!: HTMLSpanElement | null;
   uiData: UiData;
 
   constructor(options: OpacityControlsOptions) {
@@ -47,6 +48,7 @@ export class OpacityControls {
   buildElement() {
     this.container.id = "opacity-controls";
     this.container.innerHTML = template;
+    this.alphaDisplay = this.container.querySelector("#alpha-display");
   }
 
   listenOnInputs() {
@@ -54,6 +56,18 @@ export class OpacityControls {
     inputs.forEach((input) => {
       input.addEventListener('change', this.uiData.updater());
     });
+    this.listenForAlphaValueUpdates();
+  }
+
+  listenForAlphaValueUpdates() {    
+    const rangeInput = this.container.querySelector("input[type=range]")
+    if (rangeInput) {
+      rangeInput.addEventListener('change', ({target}: Event) => {
+        if (!target || !this.alphaDisplay) return;
+
+        this.alphaDisplay.innerText = (target as HTMLInputElement).value;
+      });
+    }
   }
 
   appendToBody() {

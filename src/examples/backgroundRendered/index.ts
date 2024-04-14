@@ -5,12 +5,10 @@ import { ColorShifter, colorDictToArray } from "../shared/colorShifter";
 import { Uniform } from '../../gpuApp/buffers/uniform';
 import shaders from "./background.wgsl?raw";
 
-const alpha = 0.95;
-
 export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp, FrameRateDisplay: FrameRateDisplay, uiData: UiData) => {
   const colorShifter = new ColorShifter();
   const colorUniform = new Uniform(
-    colorDictToArray(colorShifter.color, alpha),
+    colorDictToArray(colorShifter.color, uiData.get('alphaValue') || 0.95),
     gpuApp,
   )
 
@@ -24,6 +22,6 @@ export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp, FrameRateDisplay:
   pipeline.overrideVertexCount(6);
 
   pipeline.renderLoop(() => {
-    colorUniform.data = colorDictToArray(colorShifter.update(), alpha);
+    colorUniform.data = colorDictToArray(colorShifter.update(), uiData.get('alphaValue') || 0.95);
   });
 };

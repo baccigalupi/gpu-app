@@ -54,6 +54,10 @@ canvas {
 }
 
 
-#opacity-controls, #framerate-display, .form-group {
+#opacity-controls, #framerate-display {
   margin: 20px;
+}
+
+.form-group {
+  margin-top: 20px;
 }
