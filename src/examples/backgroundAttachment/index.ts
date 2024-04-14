@@ -16,7 +16,7 @@ export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
 
   pipeline.renderLoop(() => {
     pipeline.backgroundColor = {
-      r: 0.5,
+      r: 1.0,
       g: 0.5,
       b: 0.5,
       a: uiData.get('alphaValue')

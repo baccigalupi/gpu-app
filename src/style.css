@@ -29,10 +29,6 @@ body {
   grid-template-columns: auto 1fr;
 }
 
-#rendering {
-  position: absolute;
-}
-
 #controls {
   width: 300px;
 }
@@ -54,10 +50,17 @@ canvas {
 }
 
 
-#opacity-controls, #framerate-display {
+#opacity-controls, #framerate-display, #home {
   margin: 20px;
 }
 
 .form-group {
   margin-top: 20px;
+}
+
+a {
+  color: #90CAF9;
+}
+a:visited {
+  color: #B39DDB;
 }

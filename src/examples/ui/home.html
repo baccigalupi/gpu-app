@@ -1,0 +1,47 @@
+<h1>Hello GpuApp</h1>
+
+<p>
+  GpuApp is a library for eliminating the gotchas and boilerplate from work
+  in the WebGPU.
+</p>
+
+<p>
+  This is an example space and also expiremental playground to understand the
+  confusing parts about the WebGPU API.
+</p>
+
+<h2>Examples</h2>
+
+More details can be found on github. Each section has a directory with a 
+README file, and of course code!
+
+<h3>Background attachment</h3>
+
+When setting up a pipline, you have the option to run a `clear` operation that
+will set the background to a color. The color can be transparent, but there are
+some gotchas.
+
+<ul>
+  <li>
+    <a href="?page=backgroundAttachmentStatic">Simple background color</a>
+    without a shader
+  </li>
+  <li>
+    <a href="?page=backgroundAttachmentChanging">Background color that changes per frame</a>,
+    still with no shader
+  </li>
+  <li>
+    <a href="?page=backgroundAttachmentWithTriangle">Changing background color with gpu rendered triange</a>,
+  </li>
+</ul>
+
+<h3>Rendering similar background with data passed to the GPU</h3>
+
+You can work around the transparency issues by rendering in a background in the
+GPU if you do some unintutive math, premultiplying, in the shader.
+
+<ul>
+  <li>
+    <a href="?page=renderedBackground">GPU rendered background</a>
+  </li>
+</ul>

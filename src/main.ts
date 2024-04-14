@@ -5,16 +5,17 @@ import { addFrameRate } from "./examples/ui/frameRateDisplay.ts";
 import { buildUiData } from "./examples/ui/uiData.ts";
 import { addOpacityControls } from "./examples/ui/opacityControls.ts";
 
-import examples from "./examples/index";
+import { getGpuApp } from "./examples/ui/routes.ts";
+import { renderHomePage } from "./examples/ui/home.ts";
 
-const gpu = await gpuApp({parentSelector: "#canvas-container"});
-const uiData = buildUiData();
+const page = getGpuApp();
 
-addFrameRate({ uiData });
-addOpacityControls({ uiData });
-
-// examples.backgroundViaAttachment.static(gpu, uiData);
-// examples.backgroundViaAttachment.changing(gpu, uiData);
-// examples.backgroundViaAttachment.withTriangle(gpu, uiData);
-
-examples.renderedBackground.changing(gpu, uiData);
+if (page) {
+  const gpu = await gpuApp({parentSelector: "#canvas-container"});
+  const uiData = buildUiData();
+  addFrameRate({ uiData });
+  addOpacityControls({ uiData });
+  page(gpu, uiData);
+} else {
+  renderHomePage();
+}

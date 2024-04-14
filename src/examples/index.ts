@@ -1,3 +1,9 @@
+import type { GpuApp } from "../gpuApp.ts";
+import type { UiData } from "./ui/uiData.ts";
+
+export type RenderFunction = (type: GpuApp, uiData: UiData) => void;
+export type ExampleMap = Record<string, RenderFunction>
+
 import {
   renderBackgroundAndTriangle,
   renderBackgroundOnly,
@@ -9,12 +15,8 @@ import {
 } from "./backgroundRendered/index.ts";
 
 export default {
-  backgroundViaAttachment: {
-    static: renderBackgroundOnlyStatic,
-    changing: renderBackgroundOnly,
-    withTriangle: renderBackgroundAndTriangle,
-  },
-  renderedBackground: {
-    changing: renderBackgroundRectangleInGpu,
-  }
-}
+  backgroundAttachmentStatic: renderBackgroundOnlyStatic,
+  backgroundAttachmentChanging: renderBackgroundOnly,
+  backgroundAttachmentWithTriangle: renderBackgroundAndTriangle,
+  renderedBackground: renderBackgroundRectangleInGpu,
+} as ExampleMap;
