@@ -1,8 +1,9 @@
+type UiDataStore = Record<string, any>;
 export class UiData {
-  data: Record<string, any>;
+  data: UiDataStore;
 
-  constructor() {
-    this.data = {};
+  constructor(store: UiDataStore) {
+    this.data = store;
   }
 
   update(key: string, value: any) {
@@ -23,4 +24,9 @@ export class UiData {
   }
 }
 
-export const buildUiData = () => new UiData;
+export const buildUiData = () => {
+  return new UiData({
+    frameRate: 0,
+    alphaValue: 0.95,
+  })
+}

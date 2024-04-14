@@ -1,4 +1,4 @@
-const defaultBackgroundColor = {
+export const defaultBackgroundColor = {
   r: 0.1172,
   g: 0.1602,
   b: 0.2304,
@@ -32,11 +32,11 @@ export class ColorShifter {
       r: Math.random() / rateReducer,
       g: Math.random() / rateReducer,
       b: Math.random() / rateReducer,
-      a: Math.random() / rateReducer,
+      a: 1.0,
     };
   }
 
-  update() {
+  update(alpha: number = 1) {
     this.calculateNextColor();
 
     if (this.nextOutOfBounds()) {
@@ -45,6 +45,7 @@ export class ColorShifter {
     }
 
     this.color = this.nextColor;
+    this.color.a = alpha;
 
     return this.color;
   }
@@ -53,13 +54,12 @@ export class ColorShifter {
     const r = this.calculate(this.color.r, this.rates.r);
     const g = this.calculate(this.color.g, this.rates.g);
     const b = this.calculate(this.color.b, this.rates.b);
-    const a = this.calculate(this.color.a, this.rates.a);
 
     this.nextColor = {
       r,
       g,
       b,
-      a,
+      a: this.color.a,
     };
   }
 
@@ -67,8 +67,7 @@ export class ColorShifter {
     return (
       this.valueOutOfBound(this.nextColor.r) ||
       this.valueOutOfBound(this.nextColor.g) ||
-      this.valueOutOfBound(this.nextColor.b) ||
-      this.valueOutOfBound(this.nextColor.a)
+      this.valueOutOfBound(this.nextColor.b)
     );
   }
 
@@ -76,7 +75,6 @@ export class ColorShifter {
     if (this.valueOutOfBound(this.nextColor.r)) this.rates.r *= -1;
     if (this.valueOutOfBound(this.nextColor.g)) this.rates.g *= -1;
     if (this.valueOutOfBound(this.nextColor.b)) this.rates.b *= -1;
-    if (this.valueOutOfBound(this.nextColor.a)) this.rates.a *= -1;
   }
 
   calculate(value: number, rate: number) {

@@ -1,11 +1,10 @@
 import type { GpuApp } from "../../gpuApp";
-import type { FrameRateDisplay } from "../ui/frameRateDisplay";
 import type { UiData } from "../ui/uiData";
 import { ColorShifter, colorDictToArray } from "../shared/colorShifter";
 import { Uniform } from '../../gpuApp/buffers/uniform';
 import shaders from "./background.wgsl?raw";
 
-export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp, FrameRateDisplay: FrameRateDisplay, uiData: UiData) => {
+export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
   const colorUniform = new Uniform(
     colorDictToArray(colorShifter.color, uiData.get('alphaValue') || 0.95),
@@ -18,7 +17,7 @@ export const renderBackgroundRectangleInGpu = (gpuApp: GpuApp, FrameRateDisplay:
     buffers: [colorUniform],
   });
 
-  pipeline.calculateStats(FrameRateDisplay.updater());
+  pipeline.calculateStats((frameRate) => uiData.update('frameRate', frameRate));
   pipeline.overrideVertexCount(6);
 
   pipeline.renderLoop(() => {
