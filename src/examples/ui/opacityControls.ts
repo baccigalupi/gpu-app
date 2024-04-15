@@ -1,26 +1,6 @@
 import type { GpuApp } from "../../gpuApp";
 import type { UiData } from "./uiData";
-
-const template = `
-  <form action="javascript:void(0)">
-    <fieldset>
-      <legend>Canvas opacity settings</legend>
-      <div>
-        <input type="radio" name="alphaMode" value="premultiplied" id="alpha-premultiplied" checked/>
-        <label for="alpha-premultiplied">premultiplied</label>
-      </div>
-      <div>
-        <input type="radio" name="alphaMode" value="opaque" id="alpha-opaque"/>
-        <label for="alpha-opaque">opaque</label>
-      </div>
-
-      <div class="form-group">
-        <label for='alhpa'>Alpha value <span id="alpha-display">0.95</span><label><br>
-        <input type="range" name="alphaValue" id="alphaValue" min="0.0" max="1.0" value="0.95" step="0.01" />
-      </div>
-    </fieldset>
-  </form>
-`;
+import template from "./opacityControls.html?raw"
 
 type OpacityControlsOptions = {
   uiData: UiData;
@@ -83,8 +63,8 @@ export class OpacityControls {
       .forEach((input) => {
         input.addEventListener('change', ({target}: Event) => {
           if (!target) return;
-          const value = (target as HTMLInputElement).value;
-          this.gpuApp.resetCanvas(value as GPUCanvasAlphaMode);
+          const value = (target as HTMLInputElement).value as GPUCanvasAlphaMode;
+          this.gpuApp.resetCanvas(value);
         })
       })
   }
