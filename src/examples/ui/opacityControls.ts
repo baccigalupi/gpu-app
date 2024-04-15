@@ -1,3 +1,4 @@
+import type { GpuApp } from "../../gpuApp";
 import type { UiData } from "./uiData";
 
 const template = `
@@ -23,20 +24,24 @@ const template = `
 
 type OpacityControlsOptions = {
   uiData: UiData;
+  gpuApp: GpuApp;
   parentSelector?: string;
 };
 
 export class OpacityControls {
+  uiData: UiData;
+  gpuApp: GpuApp;
   container: HTMLDivElement;
   parentElement: HTMLElement;
   alphaDisplay!: HTMLSpanElement | null;
-  uiData: UiData;
-
+  
   constructor(options: OpacityControlsOptions) {
-    const parentSelector = options.parentSelector || "#controls";
-    this.container = document.createElement("div");
-    this.parentElement = document.querySelector(parentSelector) || document.body;
     this.uiData = options.uiData;
+    this.gpuApp = options.gpuApp;
+
+    const parentSelector = options.parentSelector || "#controls";
+    this.parentElement = document.querySelector(parentSelector) || document.body;
+    this.container = document.createElement("div");
   }
 
   setup() {
@@ -56,18 +61,32 @@ export class OpacityControls {
     inputs.forEach((input) => {
       input.addEventListener('change', this.uiData.updater());
     });
+    this.listenForModeChanges();
     this.listenForAlphaValueUpdates();
   }
 
   listenForAlphaValueUpdates() {    
-    const rangeInput = this.container.querySelector("input[type=range]")
-    if (rangeInput) {
-      rangeInput.addEventListener('change', ({target}: Event) => {
+    const rangeInputs = this.container.querySelectorAll("input[type=range]")
+    
+    rangeInputs.forEach((input) => {
+      input.addEventListener('change', ({target}: Event) => {
         if (!target || !this.alphaDisplay) return;
-
+  
         this.alphaDisplay.innerText = (target as HTMLInputElement).value;
       });
-    }
+    });
+  }
+
+  listenForModeChanges() {
+    this.container
+      .querySelectorAll("input[type=radio]")
+      .forEach((input) => {
+        input.addEventListener('change', ({target}: Event) => {
+          if (!target) return;
+          const value = (target as HTMLInputElement).value;
+          this.gpuApp.resetCanvas(value as GPUCanvasAlphaMode);
+        })
+      })
   }
 
   appendToBody() {

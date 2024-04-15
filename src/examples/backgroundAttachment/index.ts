@@ -8,9 +8,7 @@ import triangleShader from "./staticTriangle.wgsl?raw";
 
 const shaders = [premultiplyShader, triangleShader];
 
-export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
-  gpuApp.configureCanvas({ alphaMode: uiData.get('alphaMode') });
-  
+export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {  
   const backgroundColor = () => {
     const color = { r: 0.95, g: 0.25, b: 0.25, a: uiData.get('alphaValue') };
 

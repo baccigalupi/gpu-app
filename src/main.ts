@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { gpuApp } from "./gpuApp.ts";
+import { GpuApp, gpuApp } from "./gpuApp.ts";
 import { addFrameRate } from "./examples/ui/frameRateDisplay.ts";
 import { buildUiData } from "./examples/ui/uiData.ts";
 import { addOpacityControls } from "./examples/ui/opacityControls.ts";
@@ -10,13 +10,17 @@ import { renderHomePage } from "./examples/ui/home.ts";
 
 const page = getGpuApp();
 
+declare global {
+  interface Window { gpuApp: GpuApp; }
+}
+
 if (page) {
-  const gpu = await gpuApp({parentSelector: "#canvas-container"});
-  window.gpuApp = gpu;
   const uiData = buildUiData();
+  const app = await gpuApp({ parentSelector: "#canvas-container" });
+  window.gpuApp = app;
   addFrameRate({ uiData });
-  addOpacityControls({ uiData });
-  page(gpu, uiData);
+  addOpacityControls({ uiData, gpuApp: app });
+  page(app, uiData);
 } else {
   renderHomePage();
 }
