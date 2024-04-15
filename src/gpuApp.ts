@@ -4,6 +4,10 @@ import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 import { Shader, Shaders } from "./gpuApp/shader";
 import { Pipeline, SetupPipelineArguments } from "./gpuApp/pipeline";
 
+export type CanvasConfigureOptions = {
+  alphaMode?: "premultiplied" | "opaque"
+}
+
 const defaultBackgroundColor = {
   r: 0.5,
   g: 0.5,
@@ -50,11 +54,11 @@ export class GpuApp {
     return this.getTextureInfo().getDepthTextureFormat();
   }
 
-  configureCanvas() {
+  configureCanvas(options: CanvasConfigureOptions = { alphaMode: "premultiplied" }) {
     this.context.configure({
       device: this.device,
       format: this.getFormat(),
-      alphaMode: "premultiplied",
+      alphaMode: options.alphaMode,
     });
   }
 

@@ -12,6 +12,7 @@ const page = getGpuApp();
 
 if (page) {
   const gpu = await gpuApp({parentSelector: "#canvas-container"});
+  window.gpuApp = gpu;
   const uiData = buildUiData();
   addFrameRate({ uiData });
   addOpacityControls({ uiData });
