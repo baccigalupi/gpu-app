@@ -56,7 +56,7 @@ export class GpuApp {
     return this.getTextureInfo().getDepthTextureFormat();
   }
 
-  configureCanvas(alphaMode: GPUCanvasAlphaMode = "premultiplied" ) {
+  configureCanvas(alphaMode: GPUCanvasAlphaMode = "premultiplied") {
     this.context.configure({
       device: this.device,
       format: this.getFormat(),
@@ -83,7 +83,7 @@ export class GpuApp {
   }
 }
 
-export const gpuApp = async (options: {parentSelector?: string} = {}) => {
+export const gpuApp = async (options: { parentSelector?: string } = {}) => {
   const gpuApp = new GpuApp();
 
   gpuApp.setupCanvas(options.parentSelector || defaultCanvasParentSelector);

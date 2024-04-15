@@ -1,13 +1,14 @@
 import type { GpuApp } from "../../gpuApp";
 
-type TypedArrayClass = Int8ArrayConstructor |
-  Uint8ArrayConstructor |
-  Int16ArrayConstructor |
-  Uint16ArrayConstructor |
-  Int32ArrayConstructor |
-  Uint32ArrayConstructor |
-  Float32ArrayConstructor |
-  Float64ArrayConstructor;
+type TypedArrayClass =
+  | Int8ArrayConstructor
+  | Uint8ArrayConstructor
+  | Int16ArrayConstructor
+  | Uint16ArrayConstructor
+  | Int32ArrayConstructor
+  | Uint32ArrayConstructor
+  | Float32ArrayConstructor
+  | Float64ArrayConstructor;
 
 const defaultArrayType = Float32Array;
 
@@ -23,13 +24,13 @@ export class Uniform {
   constructor(
     data: number[],
     gpuApp: GpuApp,
-    options: {arrayType?: TypedArrayClass, label?: string} = {}
+    options: { arrayType?: TypedArrayClass; label?: string } = {},
   ) {
     this.data = data;
     this.gpuApp = gpuApp;
-    this. device = gpuApp.device;
+    this.device = gpuApp.device;
     this.arrayType = options.arrayType || defaultArrayType;
-    this.label = options.label || 'uniform buffer';
+    this.label = options.label || "uniform buffer";
     this.offset = 0;
   }
 
@@ -41,8 +42,8 @@ export class Uniform {
     if (this._buffer) return this._buffer;
 
     this._buffer = this.device.createBuffer({
-      size: this.data.length * this.arrayType.BYTES_PER_ELEMENT, 
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+      size: this.data.length * this.arrayType.BYTES_PER_ELEMENT,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
 
     return this._buffer;
@@ -56,7 +57,7 @@ export class Uniform {
     this.device.queue.writeBuffer(
       this.buffer(),
       this.offset,
-      this.convertData()
+      this.convertData(),
     );
   }
 

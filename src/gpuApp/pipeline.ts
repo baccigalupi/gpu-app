@@ -15,7 +15,7 @@ export type SetupPipelineArguments = {
   shaders: Shaders;
   backgroundColor?: GPUColorDict;
   buffers?: any[];
-}
+};
 
 export type PipelineOnUpdate = (pipeline: Pipeline) => void;
 const nullUpdater = (_pipeline: Pipeline) => {};
@@ -95,7 +95,7 @@ export class Pipeline {
 
   update(onUpdate: PipelineOnUpdate) {
     if (this.includeStats) this.frameRateCalculator.update();
-  
+
     onUpdate(this);
     // this.buffers.update(); // pass delta time?
   }
@@ -113,9 +113,7 @@ export class Pipeline {
     uniform.writeToGpu();
     const uniformsBindGroup = this.device.createBindGroup({
       layout: this.pipeline.getBindGroupLayout(0),
-      entries: [
-        { binding: 0, resource: { buffer: uniform.buffer() }},
-      ],
+      entries: [{ binding: 0, resource: { buffer: uniform.buffer() } }],
     });
 
     this.passEncoder.setBindGroup(0, uniformsBindGroup);

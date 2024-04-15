@@ -12,10 +12,13 @@ export type ColorRates = {
   a: number;
 };
 
-export const colorDictToArray = (colorDict: GPUColorDict, opacityOverride: number | null = null): number[] => {
+export const colorDictToArray = (
+  colorDict: GPUColorDict,
+  opacityOverride: number | null = null,
+): number[] => {
   const a = opacityOverride || colorDict.a;
   return [colorDict.r, colorDict.g, colorDict.b, a];
-}
+};
 
 const rateReducer = 500;
 

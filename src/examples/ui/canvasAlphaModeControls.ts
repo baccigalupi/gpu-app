@@ -35,7 +35,8 @@ export class CanvasAlphaModeControls {
   constructor(options: OpacityControlsOptions) {
     const parentSelector = options.parentSelector || "#controls";
     this.container = document.createElement("div");
-    this.parentElement = document.querySelector(parentSelector) || document.body;
+    this.parentElement =
+      document.querySelector(parentSelector) || document.body;
     this.uiData = options.uiData;
   }
 
@@ -53,7 +54,7 @@ export class CanvasAlphaModeControls {
   listenOnInputs() {
     const inputs = this.container.querySelectorAll("input");
     inputs.forEach((input) => {
-      input.addEventListener('change', this.uiData.updater());
+      input.addEventListener("change", this.uiData.updater());
     });
   }
 

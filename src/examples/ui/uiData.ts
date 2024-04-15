@@ -11,12 +11,12 @@ export class UiData {
   }
 
   updater() {
-    return ({ target } : Event) => {
+    return ({ target }: Event) => {
       if (!target) return;
 
       const input = target as HTMLInputElement;
       this.update(input.name, input.value);
-    }
+    };
   }
 
   get(key: string) {
@@ -28,5 +28,5 @@ export const buildUiData = () => {
   return new UiData({
     frameRate: 0,
     alphaValue: 0.95,
-  })
-}
+  });
+};

@@ -32,12 +32,12 @@ const gpu = await gpuApp();
 render(gpuApp);
 ```
 
-Experiment with changing the alpha values. 
+Experiment with changing the alpha values.
 
 ## Hello changing background
 
 In the example at `/examples/backgroundAttachment/index.ts`, I've also included
-some UI for calculating the framerate. So it looks more cluttered, but this is 
+some UI for calculating the framerate. So it looks more cluttered, but this is
 the condensed deal.
 
 Next let's introduce a little class that changes a color by a small amount each
@@ -80,10 +80,10 @@ in.
 
 Most WebGPU tutorials start with creating triangle data in the shader. Creating
 your data in the shader is also unusual, and for me a bit confusing. It's hard
-to track why the vertex shader gets called without vertext data, and the 
+to track why the vertex shader gets called without vertext data, and the
 magical data found via `builtin` make matters worse. But that's what we are
-going to try next with a 
+going to try next with a
 
 The
 reason that triangles are popular in tutorials is because triangles are the most
-common primative 
+common primative

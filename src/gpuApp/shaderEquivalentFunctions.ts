@@ -5,5 +5,5 @@ export const premultiply = (color: GPUColorDict) => {
     g: color.g * a,
     b: color.b * a,
     a,
-  }
-}
+  };
+};

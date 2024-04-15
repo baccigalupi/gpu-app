@@ -7,7 +7,7 @@ const template = `
 export type FrameRateDisplayOptions = {
   parentSelector?: string;
   uiData: UiData;
-}
+};
 
 const interval = 100; // ms
 export class FrameRateDisplay {
@@ -19,7 +19,8 @@ export class FrameRateDisplay {
   constructor(options: FrameRateDisplayOptions) {
     const parentSelector = options.parentSelector || "#controls";
     this.container = document.createElement("div");
-    this.parentElement = document.querySelector(parentSelector) || document.body;
+    this.parentElement =
+      document.querySelector(parentSelector) || document.body;
     this.uiData = options.uiData;
   }
 
@@ -47,7 +48,7 @@ export class FrameRateDisplay {
   update() {
     if (!this.span) return;
 
-    this.span.innerText = this.uiData.get('frameRate').toString();
+    this.span.innerText = this.uiData.get("frameRate").toString();
   }
 }
 

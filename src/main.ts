@@ -11,7 +11,9 @@ import { renderHomePage } from "./examples/ui/home.ts";
 const page = getGpuApp();
 
 declare global {
-  interface Window { gpuApp: GpuApp; }
+  interface Window {
+    gpuApp: GpuApp;
+  }
 }
 
 if (page) {
