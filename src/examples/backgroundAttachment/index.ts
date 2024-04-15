@@ -8,20 +8,16 @@ import premultiply from "../shaders/premultiply.wgsl?raw";
 const shaders = [premultiply, triangle];
 
 export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
+  const backgroundColor = () => (
+    { r: 0.95, g: 0.25, b: 0.25, a: uiData.get('alphaValue') }
+  )
   const pipeline = gpuApp.setupRendering({
     shaders,
-    backgroundColor: { r: 0.5, g: 0.5, b: 0.5, a: uiData.get('alphaValue') },
+    backgroundColor: backgroundColor(),
   });
   pipeline.calculateStats((frameRate) => uiData.update('frameRate', frameRate));
 
-  pipeline.renderLoop(() => {
-    pipeline.backgroundColor = {
-      r: 1.0,
-      g: 0.5,
-      b: 0.5,
-      a: uiData.get('alphaValue')
-    };
-  });
+  pipeline.renderLoop(() => { pipeline.backgroundColor = backgroundColor() });
 };
 
 export const renderBackgroundOnly = (gpuApp: GpuApp, uiData: UiData) => {
