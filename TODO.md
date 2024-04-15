@@ -1,5 +1,4 @@
 # TODO
 
-* shader optional
-* configure canvas opacity
+* configure canvas opacity: premultiply|opaque
 * multiple pipelines
