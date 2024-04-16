@@ -18,18 +18,10 @@ export class GpuApp {
   context!: GPUCanvasContext;
   device!: GPUDevice;
   textureInfo!: TextureInfo;
+  pipelines: Pipeline[];
 
-  setupCanvas(parentSelector = defaultCanvasParentSelector) {
-    if (this.canvas) return this.canvas;
-    this.canvas = setupCanvas(parentSelector);
-    this.context = this.canvas.context as GPUCanvasContext;
-    return this.canvas;
-  }
-
-  resetCanvas(alphaMode: GPUCanvasAlphaMode) {
-    this.canvas.reset();
-    this.context = this.canvas.context as GPUCanvasContext;
-    this.configureCanvas(alphaMode);
+  constructor() {
+    this.pipelines = [] as Pipeline[];
   }
 
   async setupDevice() {
@@ -56,6 +48,13 @@ export class GpuApp {
     return this.getTextureInfo().getDepthTextureFormat();
   }
 
+  setupCanvas(parentSelector = defaultCanvasParentSelector) {
+    if (this.canvas) return this.canvas;
+    this.canvas = setupCanvas(parentSelector);
+    this.context = this.canvas.context as GPUCanvasContext;
+    return this.canvas;
+  }
+
   configureCanvas(alphaMode: GPUCanvasAlphaMode = "premultiplied") {
     this.context.configure({
       device: this.device,
@@ -64,8 +63,10 @@ export class GpuApp {
     });
   }
 
-  formatShader(code: Shaders) {
-    return new Shader(this.device).format(code);
+  resetCanvas(alphaMode: GPUCanvasAlphaMode) {
+    this.canvas.reset();
+    this.context = this.canvas.context as GPUCanvasContext;
+    this.configureCanvas(alphaMode);
   }
 
   onCanvasResize() {
@@ -73,13 +74,21 @@ export class GpuApp {
     this.textureInfo.resetDepthTexture();
   }
 
-  setupRendering(options: SetupPipelineArguments) {
-    return new Pipeline({
+  formatShader(code: Shaders) {
+    return new Shader(this.device).format(code);
+  }
+
+  addPipeline(options: SetupPipelineArguments) {
+    const pipeline = new Pipeline({
       gpuApp: this,
       shaders: options.shaders,
       backgroundColor: options.backgroundColor || defaultBackgroundColor,
       buffers: options.buffers,
     });
+
+    this.pipelines.push(pipeline);
+
+    return pipeline;
   }
 }
 

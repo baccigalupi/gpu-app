@@ -14,7 +14,7 @@ export const renderBackgroundRectangleInGpu = (
     gpuApp,
   );
 
-  const pipeline = gpuApp.setupRendering({
+  const pipeline = gpuApp.addPipeline({
     shaders,
     backgroundColor: colorShifter.color,
     buffers: [colorUniform],
