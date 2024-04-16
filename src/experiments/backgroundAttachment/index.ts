@@ -26,7 +26,7 @@ export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
   pipeline.calculateStats((frameRate) => uiData.update("frameRate", frameRate));
 
   pipeline.renderLoop(() => {
-    pipeline.backgroundColor = backgroundColor();
+    pipeline.backgroundColor = backgroundColor(); // to take 
   });
 };
 

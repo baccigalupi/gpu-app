@@ -12,7 +12,7 @@ export class TextureInfo {
   constructor(canvas: Canvas, device: GPUDevice) {
     this.device = device;
     this.canvas = canvas;
-    this.context = canvas.context;
+    this.context = canvas.context as GPUCanvasContext;
   }
 
   getFormat() {

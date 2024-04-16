@@ -60,7 +60,7 @@ export class GpuApp {
     this.context.configure({
       device: this.device,
       format: this.getFormat(),
-      alphaMode: alphaMode,
+      alphaMode,
     });
   }
 
