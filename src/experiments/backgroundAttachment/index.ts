@@ -19,40 +19,40 @@ export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
     }
   };
 
-  const pipeline = gpuApp.addPipeline({
+  const pipeline = gpuApp.setupRendering({
     shaders,
     backgroundColor: backgroundColor(),
   });
-  pipeline.calculateStats((frameRate) => uiData.update("frameRate", frameRate));
 
-  pipeline.renderLoop(() => {
-    pipeline.backgroundColor = backgroundColor(); // to take 
+  pipeline.renderLoop((renderer) => {
+    uiData.update("frameRate", renderer.frame.rate);
+    pipeline.backgroundColor = backgroundColor();
   });
 };
 
 export const renderBackgroundOnly = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
-  const pipeline = gpuApp.addPipeline({
+  const pipeline = gpuApp.setupRendering({
     shaders,
     backgroundColor: colorShifter.color,
   });
-  pipeline.calculateStats((frameRate) => uiData.update("frameRate", frameRate));
 
-  pipeline.renderLoop(() => {
+  pipeline.renderLoop((renderer) => {
+    uiData.update("frameRate", renderer.frame.rate);
     pipeline.backgroundColor = colorShifter.update(uiData.get("alphaValue"));
   });
 };
 
 export const renderBackgroundAndTriangle = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
-  const pipeline = gpuApp.addPipeline({
+  const pipeline = gpuApp.setupRendering({
     shaders,
     backgroundColor: colorShifter.color,
   });
-  pipeline.calculateStats((frameRate) => uiData.update("frameRate", frameRate));
   pipeline.overrideVertexCount(3);
 
-  pipeline.renderLoop(() => {
+  pipeline.renderLoop((renderer) => {
+    uiData.update("frameRate", renderer.frame.rate);
     pipeline.backgroundColor = colorShifter.update(uiData.get("alphaValue"));
   });
 };

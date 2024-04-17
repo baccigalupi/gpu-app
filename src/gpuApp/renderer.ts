@@ -1,24 +1,24 @@
 import type { GpuApp } from "../gpuApp";
 import type { Shaders } from "./shader";
-import { OnFrameRateUpdate, FrameRateCalculator } from "./frameRate";
+import { OnFrameUpdate, Frame } from "./frame";
 import { passEncoderOperations } from "./passEncoderOperations";
 import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
 
-export type PipelineArguments = {
+export type RendererArguments = {
   gpuApp: GpuApp;
   shaders: Shaders;
   backgroundColor?: GPUColorDict;
   buffers?: any[];
 };
 
-export type SetupPipelineArguments = {
+export type SetupRendererArguments = {
   shaders: Shaders;
   backgroundColor?: GPUColorDict;
   buffers?: any[];
 };
 
-export type PipelineOnUpdate = (pipeline: Pipeline) => void;
-const nullUpdater = (_pipeline: Pipeline) => {};
+export type RendererOnUpdate = (renderer: Renderer) => void;
+const nullUpdater = (_renderer: Renderer) => {};
 
 const defaultBackgroundColor = {
   r: 0.5,
@@ -27,30 +27,28 @@ const defaultBackgroundColor = {
   a: 1.0,
 };
 
-export class Pipeline {
+export class Renderer {
   gpuApp: GpuApp;
   device: GPUDevice;
   queue: GPUQueue;
   shaders: Shaders;
   backgroundColor: GPUColorDict;
-  includeStats: boolean;
   buffers: any[];
   vertexCount: number;
+  frame: Frame;
 
   pipelineDescriptor: PipelineDescriptor;
-  depthTexture: GPUTexture;
 
   // set once per frame
   commandEncoder!: GPUCommandEncoder;
   pipeline!: GPURenderPipeline;
   passEncoder!: GPURenderPassEncoder;
-  frameRateCalculator!: FrameRateCalculator;
 
-  constructor(options: PipelineArguments) {
+  constructor(options: RendererArguments) {
     this.gpuApp = options.gpuApp;
     this.device = options.gpuApp.device;
     this.queue = this.gpuApp.device.queue;
-    this.depthTexture = this.gpuApp.getDepthTextureFormat();
+    this.frame = new Frame();
 
     this.shaders = options.shaders;
     this.backgroundColor = options.backgroundColor || defaultBackgroundColor;
@@ -58,23 +56,16 @@ export class Pipeline {
     this.buffers = options.buffers || [];
     this.vertexCount = this.buffers.length;
     this.pipelineDescriptor = this.setupDescriptor();
-
-    this.includeStats = false;
   }
 
-  calculateStats(onUpdate: OnFrameRateUpdate) {
-    this.includeStats = true;
-    this.frameRateCalculator = new FrameRateCalculator(onUpdate);
-  }
-
-  renderLoop(onUpdate: PipelineOnUpdate = nullUpdater) {
+  renderLoop(onUpdate: RendererOnUpdate = nullUpdater) {
     requestAnimationFrame(() => {
       this.render(onUpdate);
       this.renderLoop(onUpdate);
     });
   }
 
-  render(onUpdate: PipelineOnUpdate = nullUpdater) {
+  render(onUpdate: RendererOnUpdate = nullUpdater) {
     this.update(onUpdate);
 
     this.createFrameResources();
@@ -93,9 +84,8 @@ export class Pipeline {
 
   // -- private, maybe different class
 
-  update(onUpdate: PipelineOnUpdate) {
-    if (this.includeStats) this.frameRateCalculator.update();
-
+  update(onUpdate: RendererOnUpdate) {
+    this.frame.update();
     onUpdate(this);
     // this.buffers.update(); // pass delta time?
   }

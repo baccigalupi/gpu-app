@@ -7,7 +7,7 @@ configure the canvas context. In GpuApp, you can set the canvas' alpha mode via
 initialization arguments:
 
 ```typescript
-  const app = new gpuApp({ alphaMode: 'opaque' });
+const app = new gpuApp({ alphaMode: "opaque" });
 ```
 
 There are two options for this [alphaMode value](https://developer.mozilla.org/en-US/docs/Web/API/GPUCanvasContext/configure#alphamode): `premultiplied` and `opaque`;
@@ -22,16 +22,17 @@ white.
 So what's confusing about the `premultiplied` setting? It expects you the
 developer to apply the opacity value to each of the red, green, and blue values.
 By apply, I mean you reduce the value of the original red, greed and blue values
-by multiplying. That's why it's called `premultiplied`; you the developer 
+by multiplying. That's why it's called `premultiplied`; you the developer
 multiply those values before you pass the `GPUColor` to the gpu for render.
 
-The thing that is unintuitive about this pre-multiplication is that in the web 
+The thing that is unintuitive about this pre-multiplication is that in the web
 we use colors where the alpha channel is independent and controls the
 transparency of the color defined by the red, green and blue values. However, in
 the GPU, the expectation is that the highest value that the red, green and blue
 values can have is the alpha value.
 
 Premultiplying in typescript looks like this:
+
 ```typescript
 const premultiply = (color: GPUColorDict) => {
   const { a } = color;
@@ -41,10 +42,11 @@ const premultiply = (color: GPUColorDict) => {
     b: color.b * a,
     a,
   };
-}; 
+};
 ```
 
 In the wgsl shader language, it looks like this:
+
 ```wgsl
 fn premultiply(color: vec4f) -> vec4f {
   return vec4f(color.rgb * color.a, color.a);
@@ -56,7 +58,7 @@ recreated this in you app. Just import it.
 
 ## Hello simple background
 
-The simplest experiment, rendering a background, still requires a lot of work. 
+The simplest experiment, rendering a background, still requires a lot of work.
 
 It's easier with GpuApp:
 
@@ -69,12 +71,12 @@ const { premultiply } = jsShaderEquivalents;
 const app = await gpuApp({ parentSelector: "#canvas-container" });
 const backgroundColor = premuliply({ r: 0.95, g: 0.25, b: 0.25, a: 0.5 });
 
-app.addPipeline({ shaders: shader, backgroundColor })
+app.setupRendering({ shaders: shader, backgroundColor });
 app.render();
 ```
 
 This is an experiment about rendering a background via attachment
-operations and also the differences between `premultiplied` and `opaque`. 
+operations and also the differences between `premultiplied` and `opaque`.
 
 ### Premuliply attachment, without premuliplying the value
 
@@ -153,7 +155,7 @@ But what happens if you premultiply the background anyway?
 ```typescript
 const app = await gpuApp({
   parentSelector: "#canvas-container",
-  alphaMode: "opaque"
+  alphaMode: "opaque",
 });
 
 const backgroundColor = premuliply({ r: 0.95, g: 0.25, b: 0.25, a: 0.5 });
@@ -167,6 +169,7 @@ color is edging towards black by the alpha value.
 ![color premultiplied with opaque configuration](/src/experiments/backgroundAttachment/images/opaque-premultiplied-050.png)
 
 Alpha value is 0.5, which results in a color that is equivalent to:
+
 ```typescript
 { r: 0.475, g: 0.125, b: 0.125 }
 ```
@@ -189,12 +192,7 @@ warning.
 
 ## Hello changing background
 
-
-
 `renderLoop` takes an update function that you can use to change stuff between
 frames.
 
-
 ## Hello transparency fail
-
-

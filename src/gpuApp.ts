@@ -2,7 +2,7 @@ import { setupCanvas, Canvas } from "./gpuApp/canvas";
 import { setupDevice } from "./gpuApp/device";
 import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 import { Shader, Shaders } from "./gpuApp/shader";
-import { Pipeline, SetupPipelineArguments } from "./gpuApp/pipeline";
+import { Renderer, SetupRendererArguments } from "./gpuApp/renderer";
 
 const defaultBackgroundColor = {
   r: 0.5,
@@ -18,11 +18,6 @@ export class GpuApp {
   context!: GPUCanvasContext;
   device!: GPUDevice;
   textureInfo!: TextureInfo;
-  pipelines: Pipeline[];
-
-  constructor() {
-    this.pipelines = [] as Pipeline[];
-  }
 
   async setupDevice() {
     if (this.device) return this.device;
@@ -78,17 +73,13 @@ export class GpuApp {
     return new Shader(this.device).format(code);
   }
 
-  addPipeline(options: SetupPipelineArguments) {
-    const pipeline = new Pipeline({
+  setupRendering(options: SetupRendererArguments) {
+    return new Renderer({
       gpuApp: this,
       shaders: options.shaders,
       backgroundColor: options.backgroundColor || defaultBackgroundColor,
       buffers: options.buffers,
     });
-
-    this.pipelines.push(pipeline);
-
-    return pipeline;
   }
 }
 

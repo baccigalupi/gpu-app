@@ -14,16 +14,16 @@ export const renderBackgroundRectangleInGpu = (
     gpuApp,
   );
 
-  const pipeline = gpuApp.addPipeline({
+  const pipeline = gpuApp.setupRendering({
     shaders,
     backgroundColor: colorShifter.color,
     buffers: [colorUniform],
   });
 
-  pipeline.calculateStats((frameRate) => uiData.update("frameRate", frameRate));
   pipeline.overrideVertexCount(6);
 
-  pipeline.renderLoop(() => {
+  pipeline.renderLoop((renderer) => {
+    uiData.update("frameRate", renderer.frame.rate);
     colorUniform.data = colorDictToArray(
       colorShifter.update(),
       uiData.get("alphaValue") || 0.95,
