@@ -1,6 +1,6 @@
 import type { GpuApp } from "../gpuApp";
 import type { Shaders } from "./shader";
-import { OnFrameUpdate, Frame } from "./frame";
+import { Frame } from "./frame";
 import { passEncoderOperations } from "./passEncoderOperations";
 import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
 
@@ -86,8 +86,8 @@ export class Renderer {
 
   update(onUpdate: RendererOnUpdate) {
     this.frame.update();
-    onUpdate(this);
     // this.buffers.update(); // pass delta time?
+    onUpdate(this);
   }
 
   createFrameResources() {
