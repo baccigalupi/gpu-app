@@ -1,4 +1,4 @@
-import { GpuApp } from "../gpuApp";
+import { GpuApp } from "./facade";
 
 export class PassEncoderOperations {
   gpuApp: GpuApp;

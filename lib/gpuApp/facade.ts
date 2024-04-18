@@ -1,8 +1,12 @@
-import { setupCanvas, Canvas } from "./gpuApp/canvas";
-import { setupDevice } from "./gpuApp/device";
-import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
-import { Shader, Shaders } from "./gpuApp/shader";
-import { Renderer, nullRenderUpdater, RendererOnUpdate } from "./gpuApp/renderer";
+import { setupCanvas, Canvas } from "./canvas";
+import { setupDevice } from "./device";
+import { textureInfo, TextureInfo } from "./textureInfo";
+import { Shader, Shaders } from "./shader";
+import {
+  Renderer,
+  nullRenderUpdater,
+  RendererOnUpdate,
+} from "./renderer";
 
 const defaultCanvasParentSelector = "#app";
 

@@ -1,4 +1,4 @@
-import type { GpuApp } from "../../gpuApp";
+import type { GpuApp } from "../facade";
 
 type TypedArrayClass =
   | Int8ArrayConstructor

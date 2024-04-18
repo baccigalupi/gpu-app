@@ -1,4 +1,4 @@
-import type { GpuApp } from "../gpuApp";
+import type { GpuApp } from "./facade";
 import type { Shaders } from "./shader";
 
 export type EntryOptions = {

@@ -1,7 +1,7 @@
-export type OnFrameUpdate = (fram: Frame) => void;
-const nullUpdater = (_frame: Frame) => {};
+export type OnFrameUpdate = (fram: FrameInfo) => void;
+const nullUpdater = (_frame: FrameInfo) => {};
 
-export class Frame {
+export class FrameInfo {
   startTime: number;
   rate: number;
   deltaTime: number;

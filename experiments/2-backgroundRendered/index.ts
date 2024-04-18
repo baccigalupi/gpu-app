@@ -1,8 +1,11 @@
-import type { GpuApp } from "../../gpuApp";
+import { GpuApp, shaders as gpuShaders } from "../../dist/gpu-app.es";
 import type { UiData } from "../ui/uiData";
 import { ColorShifter, colorDictToArray } from "../shared/colorShifter";
-import { Uniform } from "../../gpuApp/buffers/uniform";
-import shaders from "./background.wgsl?raw";
+import { Uniform } from "../../lib/gpuApp/buffers/uniform";
+import backgroundShader from "./background.wgsl?raw";
+
+const { premultiply } = gpuShaders;
+const shaders = [premultiply, backgroundShader];
 
 export const renderBackgroundRectangleInGpu = (
   gpuApp: GpuApp,

@@ -1,12 +1,12 @@
 import "./style.css";
 
-import { GpuApp, gpuApp } from "./gpuApp.ts";
-import { addFrameRate } from "./experiments/ui/frameRateDisplay.ts";
-import { buildUiData } from "./experiments/ui/uiData.ts";
-import { addOpacityControls } from "./experiments/ui/opacityControls.ts";
+import { GpuApp, gpuApp } from "../dist/gpu-app.es.js";
+import { addFrameRate } from "./ui/frameRateDisplay.ts";
+import { buildUiData } from "./ui/uiData.ts";
+import { addOpacityControls } from "./ui/opacityControls.ts";
 
-import { getGpuApp } from "./experiments/ui/routes.ts";
-import { renderHomePage } from "./experiments/ui/home.ts";
+import { getGpuApp } from "./ui/routes.ts";
+import { renderHomePage } from "./ui/home.ts";
 
 const page = getGpuApp();
 

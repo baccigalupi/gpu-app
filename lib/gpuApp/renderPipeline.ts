@@ -1,7 +1,7 @@
-import type { GpuApp } from '../gpuApp';
-import type { Renderer } from './renderer';
-import type { Shaders } from './shader';
-import { pipelineDescriptor } from './pipelineDescriptor';
+import type { GpuApp } from "./facade";
+import type { Renderer } from "./renderer";
+import type { Shaders } from "./shader";
+import { pipelineDescriptor } from "./pipelineDescriptor";
 
 export class RenderPipeline {
   gpuApp: GpuApp;

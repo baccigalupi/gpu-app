@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["@webgpu/types"]
   },
-  "include": ["src"]
+  "include": ["lib"]
 }

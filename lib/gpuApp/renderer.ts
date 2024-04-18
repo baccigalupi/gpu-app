@@ -1,7 +1,7 @@
-import type { GpuApp } from "../gpuApp";
+import type { GpuApp } from "./facade";
 import { RenderPipeline } from "./renderPipeline";
 import type { Shaders } from "./shader";
-import { Frame } from "./frame";
+import { FrameInfo } from "./frameInfo";
 import { passEncoderOperations } from "./passEncoderOperations";
 
 export type RendererOnUpdate = (renderer: Renderer) => void;
@@ -21,7 +21,7 @@ export const defaultBackgroundColor = {
 
 export class Renderer {
   gpuApp: GpuApp;
-  frame: Frame;
+  frame: FrameInfo;
   renderPipelines: RenderPipeline[];
 
   device!: GPUDevice;
@@ -34,7 +34,7 @@ export class Renderer {
 
   constructor(gpuApp: GpuApp) {
     this.gpuApp = gpuApp;
-    this.frame = new Frame();
+    this.frame = new FrameInfo();
     this.renderPipelines = [] as RenderPipeline[];
   }
 
@@ -57,7 +57,7 @@ export class Renderer {
     this.renderPipelines.forEach((renderPipeline) => {
       renderPipeline.run();
     });
-    
+
     this.finishFrame();
   }
 
@@ -101,7 +101,9 @@ export class Renderer {
   setupEncoder() {
     const operations = passEncoderOperations(this.gpuApp);
 
-    const background = operations.background(this.backgroundColor || defaultBackgroundColor);
+    const background = operations.background(
+      this.backgroundColor || defaultBackgroundColor,
+    );
     background.view = this.gpuApp.context.getCurrentTexture().createView();
 
     return this.commandEncoder.beginRenderPass({

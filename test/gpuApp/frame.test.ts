@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { Frame } from "../../src/gpuApp/frame";
+import { FrameInfo } from "../../src/gpuApp/frame";
 
-describe("Frame", () => {
+describe("FrameInfo", () => {
   it("has good default values and doesnt't freak out during first calculation", () => {
-    const frameInfo = new Frame();
+    const frameInfo = new FrameInfo();
 
     expect(() => {
       frameInfo.update();
@@ -12,7 +12,7 @@ describe("Frame", () => {
   });
 
   it("calculates the delta time and the frame rate", () => {
-    const frameInfo = new Frame();
+    const frameInfo = new FrameInfo();
     const mockNow = frameInfo.startTime + 1200;
 
     frameInfo.update(mockNow);
@@ -32,7 +32,7 @@ describe("Frame", () => {
       data.deltaTime = frame.deltaTime;
       data.frameRate = frame.rate;
     });
-    const frameInfo = new Frame(onUpdate);
+    const frameInfo = new FrameInfo(onUpdate);
     const mockNow = frameInfo.startTime + 1200;
 
     frameInfo.update(mockNow);

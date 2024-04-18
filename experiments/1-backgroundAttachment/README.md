@@ -63,15 +63,16 @@ The simplest experiment, rendering a background, still requires a lot of work.
 It's easier with GpuApp:
 
 ```typescript
-import { GpuApp, jsShaderEquivalents } from "gpuApp";
+import { GpuApp, color } from "gpuApp";
 import shader from "./path/to/shader.wgsl?raw";
 
-const { premultiply } = jsShaderEquivalents;
+const { premultiply } = color;
 
 const app = await gpuApp({ parentSelector: "#canvas-container" });
 const backgroundColor = premuliply({ r: 0.95, g: 0.25, b: 0.25, a: 0.5 });
 
-app.setupRendering({ shaders: shader, backgroundColor });
+app.setBackgroundColor(backgroundColor);
+app.setupRendering(shader);
 app.render();
 ```
 
@@ -192,7 +193,75 @@ warning.
 
 ## Hello changing background
 
-`renderLoop` takes an update function that you can use to change stuff between
-frames.
+The WebGPU and this GpuApp library are made for animation, and the GpuApp
+provides you with a callback in order to update data going into the gpu:
+
+```typescript
+import { GpuApp, color } from "gpuApp";
+import shader from "./path/to/shader.wgsl?raw";
+
+const backgroundChanger = () => {
+  // generates a color that slowly shifts
+};
+
+const app = await gpuApp({ parentSelector: "#canvas-container" });
+
+app.setBackgroundColor(backgroundChanger());
+app.setupRendering(shader);
+app.render(() => backgroundChanger());
+```
+
+If you are looking for an example of a class that changes the color slowly,
+check out [/src/experiments/shared/colorShifter.ts](ColorShifter).
 
 ## Hello transparency fail
+
+Most WebGPU tutorials start with rendering a triangle via a shader statically.
+Probably this is because a triangle is the primitive most often used for
+rendering in the GPU, and because sending data to the GPU is very, very
+complicated.
+
+Now that we have a background that is doing transparency in a way that makes
+some sense, let's go ahead and render a transparent triangle via the shader.
+
+```wgsl
+@vertex
+fn vertex_entry(@builtin(vertex_index) index : u32) -> @builtin(position) vec4f {
+  var pos = array<vec2f, 3>(
+    vec2(0.0, 0.5),
+    vec2(-0.5, -0.5),
+    vec2(0.5, -0.5)
+  );
+
+  return vec4f(pos[index], 0.0, 1.0);
+}
+
+@fragment
+fn fragment_entry() -> @location(0) vec4f {
+  return premultiply(vec4f(0.25, 0.95, 0.25, 0.5));
+}
+```
+
+The GPU coordinate system for x and y range from -1 to 1. So the triangle we are
+defining in the `@vertex` `vertex_entry` function is roughly in the center of
+the screen.
+
+The `premuliply` function in wgsl is the one shown at the top of this doc in the
+description of alpha modes. We can pass both shaders via passing an array to
+the GpuApp.
+
+```typescript
+import premultiplyShader from "../shaders/premultiply.wgsl?raw";
+import triangleShader from "./staticTriangle.wgsl?raw";
+
+const shaders = [premultiplyShader, triangleShader];
+gpuApp.setBackgroundColor(backgroundColor);
+const pipeline = gpuApp.setupRendering(shaders);
+pipeline.overrideVertexCount(3)
+gpuApp.render();
+```
+
+Since we are rendering via the wsgl shader, we have to explicitly tell the
+pipeline how many vertices we expect. In the case of a triangle, and our code,
+that is three.
+

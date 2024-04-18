@@ -8,8 +8,11 @@ export const premultiply = (color: GPUColorDict) => {
   };
 };
 
-export const normalizeColor = (color: GPUColorDict, alphaMode: GPUCanvasAlphaMode) => {
+export const normalizeColor = (
+  color: GPUColorDict,
+  alphaMode: GPUCanvasAlphaMode,
+) => {
   if (alphaMode === "opaque") return color;
 
   return premultiply(color);
-}
+};

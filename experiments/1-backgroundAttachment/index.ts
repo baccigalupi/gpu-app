@@ -1,12 +1,12 @@
-import type { GpuApp } from "../../gpuApp";
+import { GpuApp, color, shaders as gpuShaders } from "../../dist/gpu-app.es";
 import type { UiData } from "../ui/uiData";
 
 import { ColorShifter } from "../shared/colorShifter";
-import { normalizeColor } from "../../gpuApp/color";
-import premultiplyShader from "../shaders/premultiply.wgsl?raw";
 import triangleShader from "./staticTriangle.wgsl?raw";
 
-const shaders = [premultiplyShader, triangleShader];
+const { normalizeColor } = color;
+const { premultiply } = gpuShaders;
+const shaders = [premultiply, triangleShader];
 
 export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
   const backgroundColor = () => {
@@ -26,7 +26,7 @@ export const renderBackgroundOnly = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
   const backgroundColor = () => {
     return normalizeColor(colorShifter.color, uiData.get("alphaMode"));
-  }
+  };
 
   gpuApp.setBackgroundColor(backgroundColor());
   gpuApp.setupRendering(shaders);
@@ -41,7 +41,7 @@ export const renderBackgroundAndTriangle = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
   const backgroundColor = () => {
     return normalizeColor(colorShifter.color, uiData.get("alphaMode"));
-  }
+  };
 
   gpuApp.setBackgroundColor(backgroundColor());
   const pipeline = gpuApp.setupRendering(shaders);
