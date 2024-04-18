@@ -14,46 +14,42 @@ export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
     return normalizeColor(color, uiData.get("alphaMode"));
   };
 
-  const pipeline = gpuApp.setupRendering({
-    shaders,
-    backgroundColor: backgroundColor(),
-  });
-
-  pipeline.renderLoop((renderer) => {
+  gpuApp.setBackgroundColor(backgroundColor());
+  gpuApp.setupRendering(shaders);
+  gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-    pipeline.backgroundColor = backgroundColor();
+    renderer.backgroundColor = backgroundColor();
   });
 };
 
 export const renderBackgroundOnly = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
-  const pipeline = gpuApp.setupRendering({
-    shaders,
-    backgroundColor: colorShifter.color,
-  });
+  const backgroundColor = () => {
+    return normalizeColor(colorShifter.color, uiData.get("alphaMode"));
+  }
 
-  pipeline.renderLoop((renderer) => {
+  gpuApp.setBackgroundColor(backgroundColor());
+  gpuApp.setupRendering(shaders);
+  gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-    pipeline.backgroundColor = normalizeColor(
-      colorShifter.update(uiData.get("alphaValue")),
-      uiData.get("alphaMode"),
-    );
+    colorShifter.update(uiData.get("alphaValue"));
+    renderer.backgroundColor = backgroundColor();
   });
 };
 
 export const renderBackgroundAndTriangle = (gpuApp: GpuApp, uiData: UiData) => {
   const colorShifter = new ColorShifter();
-  const pipeline = gpuApp.setupRendering({
-    shaders,
-    backgroundColor: colorShifter.color,
-  });
+  const backgroundColor = () => {
+    return normalizeColor(colorShifter.color, uiData.get("alphaMode"));
+  }
+
+  gpuApp.setBackgroundColor(backgroundColor());
+  const pipeline = gpuApp.setupRendering(shaders);
   pipeline.overrideVertexCount(3);
 
-  pipeline.renderLoop((renderer) => {
+  gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-    pipeline.backgroundColor = normalizeColor(
-      colorShifter.update(uiData.get("alphaValue")),
-      uiData.get("alphaMode"),
-    );
+    colorShifter.update(uiData.get("alphaValue"));
+    renderer.backgroundColor = backgroundColor();
   });
 };

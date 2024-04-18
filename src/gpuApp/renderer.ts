@@ -1,140 +1,111 @@
 import type { GpuApp } from "../gpuApp";
+import { RenderPipeline } from "./renderPipeline";
 import type { Shaders } from "./shader";
 import { Frame } from "./frame";
 import { passEncoderOperations } from "./passEncoderOperations";
-import { PipelineDescriptor, pipelineDescriptor } from "./pipelineDescriptor";
-
-export type RendererArguments = {
-  gpuApp: GpuApp;
-  shaders: Shaders;
-  backgroundColor?: GPUColorDict;
-  buffers?: any[];
-};
-
-export type SetupRendererArguments = {
-  shaders: Shaders;
-  backgroundColor?: GPUColorDict;
-  buffers?: any[];
-};
 
 export type RendererOnUpdate = (renderer: Renderer) => void;
-const nullUpdater = (_renderer: Renderer) => {};
+export const nullRenderUpdater = (_renderer: Renderer) => {};
 
-const defaultBackgroundColor = {
-  r: 0.5,
-  g: 0.5,
-  b: 0.5,
+export type AddPipelineOptions = {
+  shaders: Shaders;
+  models?: any[];
+};
+
+export const defaultBackgroundColor = {
+  r: 0.1172,
+  g: 0.1602,
+  b: 0.2304,
   a: 1.0,
 };
 
 export class Renderer {
   gpuApp: GpuApp;
-  device: GPUDevice;
-  queue: GPUQueue;
-  shaders: Shaders;
-  backgroundColor: GPUColorDict;
-  buffers: any[];
-  vertexCount: number;
   frame: Frame;
+  renderPipelines: RenderPipeline[];
 
-  pipelineDescriptor: PipelineDescriptor;
+  device!: GPUDevice;
+  queue!: GPUQueue;
+  backgroundColor!: GPUColorDict;
 
   // set once per frame
   commandEncoder!: GPUCommandEncoder;
-  pipeline!: GPURenderPipeline;
   passEncoder!: GPURenderPassEncoder;
 
-  constructor(options: RendererArguments) {
-    this.gpuApp = options.gpuApp;
-    this.device = options.gpuApp.device;
-    this.queue = this.gpuApp.device.queue;
+  constructor(gpuApp: GpuApp) {
+    this.gpuApp = gpuApp;
     this.frame = new Frame();
-
-    this.shaders = options.shaders;
-    this.backgroundColor = options.backgroundColor || defaultBackgroundColor;
-
-    this.buffers = options.buffers || [];
-    this.vertexCount = this.buffers.length;
-    this.pipelineDescriptor = this.setupDescriptor();
+    this.renderPipelines = [] as RenderPipeline[];
   }
 
-  renderLoop(onUpdate: RendererOnUpdate = nullUpdater) {
+  setup() {
+    this.device = this.gpuApp.device;
+    this.queue = this.gpuApp.device.queue;
+  }
+
+  renderLoop(onUpdate: RendererOnUpdate = nullRenderUpdater) {
     requestAnimationFrame(() => {
       this.render(onUpdate);
       this.renderLoop(onUpdate);
     });
   }
 
-  render(onUpdate: RendererOnUpdate = nullUpdater) {
+  render(onUpdate: RendererOnUpdate = nullRenderUpdater) {
     this.update(onUpdate);
-
     this.createFrameResources();
 
-    this.setupBindGroups();
-
-    this.passEncoder.draw(this.vertexCount);
-    this.passEncoder.end();
-
-    this.queue.submit([this.commandEncoder.finish()]);
+    this.renderPipelines.forEach((renderPipeline) => {
+      renderPipeline.run();
+    });
+    
+    this.finishFrame();
   }
 
-  overrideVertexCount(count: number) {
-    this.vertexCount = count;
+  addPipeline(options: AddPipelineOptions) {
+    const pipeline = new RenderPipeline(this.gpuApp, this, options.shaders);
+    if (options.models) pipeline.models = options.models;
+    this.renderPipelines.push(pipeline);
+    return pipeline;
   }
 
-  // -- private, maybe different class
+  setBackgroundColor(color: GPUColorDict) {
+    this.backgroundColor = color;
+  }
+
+  /// ---- private
 
   update(onUpdate: RendererOnUpdate) {
     this.frame.update();
-    // this.buffers.update(); // pass delta time?
+    // this.renderPipelines.forEach((pipeline) => pipeline.update(this.frame.deltaTime));
     onUpdate(this);
   }
 
   createFrameResources() {
     this.createCommandEncoder();
-    this.createPipeline();
     this.createPassEncoder();
   }
 
-  setupBindGroups() {
-    if (!this.buffers.length) return;
-
-    const uniform = this.buffers[0];
-    uniform.writeToGpu();
-    const uniformsBindGroup = this.device.createBindGroup({
-      layout: this.pipeline.getBindGroupLayout(0),
-      entries: [{ binding: 0, resource: { buffer: uniform.buffer() } }],
-    });
-
-    this.passEncoder.setBindGroup(0, uniformsBindGroup);
+  finishFrame() {
+    this.passEncoder.end();
+    this.queue.submit([this.commandEncoder.finish()]);
   }
 
   createCommandEncoder() {
     this.commandEncoder = this.device.createCommandEncoder();
   }
 
-  createPipeline() {
-    const descriptor = this.pipelineDescriptor.build();
-    this.pipeline = this.device.createRenderPipeline(descriptor);
-  }
-
   createPassEncoder() {
     this.passEncoder = this.setupEncoder();
-    this.passEncoder.setPipeline(this.pipeline);
   }
 
   setupEncoder() {
     const operations = passEncoderOperations(this.gpuApp);
 
-    const background = operations.background(this.backgroundColor);
+    const background = operations.background(this.backgroundColor || defaultBackgroundColor);
     background.view = this.gpuApp.context.getCurrentTexture().createView();
 
     return this.commandEncoder.beginRenderPass({
       colorAttachments: [background],
     });
-  }
-
-  setupDescriptor() {
-    return pipelineDescriptor(this.gpuApp, this.shaders);
   }
 }

@@ -10,23 +10,18 @@ export const renderBackgroundRectangleInGpu = (
 ) => {
   const colorShifter = new ColorShifter();
   const colorUniform = new Uniform(
-    colorDictToArray(colorShifter.color, uiData.get("alphaValue") || 0.95),
+    colorDictToArray(colorShifter.color, uiData.get("alphaValue")),
     gpuApp,
   );
 
-  const pipeline = gpuApp.setupRendering({
-    shaders,
-    backgroundColor: colorShifter.color,
-    buffers: [colorUniform],
-  });
-
+  const pipeline = gpuApp.setupRendering(shaders, [colorUniform]);
   pipeline.overrideVertexCount(6);
 
-  pipeline.renderLoop((renderer) => {
+  gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
     colorUniform.data = colorDictToArray(
       colorShifter.update(),
-      uiData.get("alphaValue") || 0.95,
+      uiData.get("alphaValue"),
     );
   });
 };

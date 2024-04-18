@@ -2,26 +2,25 @@ import { setupCanvas, Canvas } from "./gpuApp/canvas";
 import { setupDevice } from "./gpuApp/device";
 import { textureInfo, TextureInfo } from "./gpuApp/textureInfo";
 import { Shader, Shaders } from "./gpuApp/shader";
-import { Renderer, SetupRendererArguments } from "./gpuApp/renderer";
-
-const defaultBackgroundColor = {
-  r: 0.5,
-  g: 0.5,
-  b: 0.5,
-  a: 1.0,
-};
+import { Renderer, nullRenderUpdater, RendererOnUpdate } from "./gpuApp/renderer";
 
 const defaultCanvasParentSelector = "#app";
 
 export class GpuApp {
+  renderer: Renderer;
   canvas!: Canvas;
   context!: GPUCanvasContext;
   device!: GPUDevice;
   textureInfo!: TextureInfo;
 
+  constructor() {
+    this.renderer = new Renderer(this);
+  }
+
   async setupDevice() {
     if (this.device) return this.device;
     this.device = await setupDevice(this.context);
+    this.renderer.setup();
     return this.device;
   }
 
@@ -73,13 +72,16 @@ export class GpuApp {
     return new Shader(this.device).format(code);
   }
 
-  setupRendering(options: SetupRendererArguments) {
-    return new Renderer({
-      gpuApp: this,
-      shaders: options.shaders,
-      backgroundColor: options.backgroundColor || defaultBackgroundColor,
-      buffers: options.buffers,
-    });
+  setBackgroundColor(color: GPUColorDict) {
+    this.renderer.setBackgroundColor(color);
+  }
+
+  setupRendering(shaders: Shaders, models?: any[]) {
+    return this.renderer.addPipeline({ shaders, models });
+  }
+
+  render(onUpdate: RendererOnUpdate = nullRenderUpdater) {
+    this.renderer.renderLoop(onUpdate);
   }
 }
 
