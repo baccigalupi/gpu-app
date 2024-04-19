@@ -3,9 +3,11 @@
   "private": false,
   "version": "0.1.0",
   "type": "module",
-  "files":["dist"],
-  "main":"./dist/gpu-app.umd.js",
-  "module":"./dist/gpu-app.es.js",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/gpu-app.umd.js",
+  "module": "./dist/gpu-app.es.js",
   "exports": {
     ".": {
       "import": "./dist/gpu-app.es.js",

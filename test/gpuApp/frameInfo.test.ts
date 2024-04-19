@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
-import { FrameInfo } from "../../src/gpuApp/frame";
+import { FrameInfo } from "../../lib/gpuApp/frameInfo";
 
 describe("FrameInfo", () => {
   it("has good default values and doesnt't freak out during first calculation", () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { Shader } from "../../src/gpuApp/shader";
+import { Shader } from "../../lib/gpuApp/shader";
 
 describe("Shader, format", () => {
   const device = {

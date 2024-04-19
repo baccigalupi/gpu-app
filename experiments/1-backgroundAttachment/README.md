@@ -257,11 +257,10 @@ import triangleShader from "./staticTriangle.wgsl?raw";
 const shaders = [premultiplyShader, triangleShader];
 gpuApp.setBackgroundColor(backgroundColor);
 const pipeline = gpuApp.setupRendering(shaders);
-pipeline.overrideVertexCount(3)
+pipeline.overrideVertexCount(3);
 gpuApp.render();
 ```
 
 Since we are rendering via the wsgl shader, we have to explicitly tell the
 pipeline how many vertices we expect. In the case of a triangle, and our code,
 that is three.
-

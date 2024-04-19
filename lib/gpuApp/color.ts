@@ -16,3 +16,11 @@ export const normalizeColor = (
 
   return premultiply(color);
 };
+
+export const colorDictToArray = (
+  colorDict: GPUColorDict,
+  opacityOverride: number | null = null,
+): number[] => {
+  const a = opacityOverride || colorDict.a;
+  return [colorDict.r, colorDict.g, colorDict.b, a];
+};

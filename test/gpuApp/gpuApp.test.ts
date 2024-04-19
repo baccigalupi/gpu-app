@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { GpuApp } from "../src/gpuApp";
+import { GpuApp } from "../../lib/gpu-app";
 
 describe("GpuApp", () => {
   it("formats shader modules", () => {

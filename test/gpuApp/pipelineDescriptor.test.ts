@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { pipelineDescriptor } from "../../src/gpuApp/pipelineDescriptor";
-import { GpuApp } from "../../src/gpuApp";
+import { pipelineDescriptor } from "../../lib/gpuApp/pipelineDescriptor";
+import { GpuApp } from "../../lib/gpuApp/facade";
 
 describe("getPipelineDescriptor", () => {
   const shaders = ["code1", "code2", "code3"];

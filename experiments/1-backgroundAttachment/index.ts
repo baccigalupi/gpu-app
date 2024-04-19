@@ -2,7 +2,7 @@ import { GpuApp, color, shaders as gpuShaders } from "../../dist/gpu-app.es";
 import type { UiData } from "../ui/uiData";
 
 import { ColorShifter } from "../shared/colorShifter";
-import triangleShader from "./staticTriangle.wgsl?raw";
+import triangleShader from "../shared/shaders/staticTriangle.wgsl?raw";
 
 const { normalizeColor } = color;
 const { premultiply } = gpuShaders;

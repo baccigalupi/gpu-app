@@ -2,11 +2,7 @@ import { setupCanvas, Canvas } from "./canvas";
 import { setupDevice } from "./device";
 import { textureInfo, TextureInfo } from "./textureInfo";
 import { Shader, Shaders } from "./shader";
-import {
-  Renderer,
-  nullRenderUpdater,
-  RendererOnUpdate,
-} from "./renderer";
+import { Renderer, nullRenderUpdater, RendererOnUpdate } from "./renderer";
 
 const defaultCanvasParentSelector = "#app";
 
