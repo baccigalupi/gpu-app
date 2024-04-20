@@ -3,7 +3,6 @@ import type { UiData } from "../ui/uiData";
 import { shaders as gpuShaders } from "../../lib/gpuApp/shaders";
 import { ColorModel } from "../../lib/gpuApp/models/color";
 import { ColorShifter } from "../shared/colorShifter2";
-import { Uniform } from "../../lib/gpuApp/models/buffers/uniform";
 
 import backgroundShader from "./background.wgsl?raw";
 import triangleShader from "../shared/shaders/staticTriangle.wgsl?raw";
