@@ -273,7 +273,7 @@ class E {
     e.writeToGpu();
     const s = this.device.createBindGroup({
       layout: this.pipeline.getBindGroupLayout(0),
-      entries: [{ binding: 0, resource: { buffer: e.buffer() } }],
+      entries: [{ binding: 0, resource: { buffer: e.gpuBuffer() } }],
     });
     this.passEncoder.setBindGroup(0, s);
   }
@@ -500,11 +500,11 @@ const k = async (r = {}) => {
       { value: "Module" },
     ),
   ),
-  j = `fn premultiply(color: vec4f) -> vec4f {
+  B = `fn premultiply(color: vec4f) -> vec4f {
   return vec4f(color.rgb * color.a, color.a);
 }`,
   q = {
-    premultiply: j,
+    premultiply: B,
   };
 export {
   p as Canvas,

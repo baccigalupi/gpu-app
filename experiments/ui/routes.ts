@@ -7,13 +7,17 @@ import {
   renderBackgroundOnlyStatic,
 } from "../1-backgroundAttachment/index.ts";
 
-import { renderBackgroundRectangleInGpu } from "../2-backgroundRendered/index.ts";
+import {
+  renderBackgroundRectangleInGpu,
+  renderBackgroundRectangleWithTriangle,
+} from "../2-backgroundRendered/index.ts";
 
 const examples = {
   backgroundAttachmentStatic: renderBackgroundOnlyStatic,
   backgroundAttachmentChanging: renderBackgroundOnly,
   backgroundAttachmentWithTriangle: renderBackgroundAndTriangle,
   renderedBackground: renderBackgroundRectangleInGpu,
+  renderedBackgoundWithTriangle: renderBackgroundRectangleWithTriangle,
 } as ExampleMap;
 
 type RenderFunction = (type: GpuApp, uiData: UiData) => void;

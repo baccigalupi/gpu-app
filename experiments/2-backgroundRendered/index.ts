@@ -1,7 +1,10 @@
-import { GpuApp, shaders as gpuShaders, color } from "../../dist/gpu-app.es";
+import type { GpuApp } from "../../lib/gpuApp/facade";
 import type { UiData } from "../ui/uiData";
-import { ColorShifter } from "../shared/colorShifter";
-import { Uniform } from "../../lib/gpuApp/buffers/uniform";
+import { shaders as gpuShaders } from "../../lib/gpuApp/shaders";
+import { ColorModel } from "../../lib/gpuApp/models/color";
+import { ColorShifter } from "../shared/colorShifter2";
+import { Uniform } from "../../lib/gpuApp/models/buffers/uniform";
+
 import backgroundShader from "./background.wgsl?raw";
 import triangleShader from "../shared/shaders/staticTriangle.wgsl?raw";
 
@@ -12,23 +15,23 @@ export const renderBackgroundRectangleInGpu = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const colorShifter = new ColorShifter();
-  const colorUniform = new Uniform(
-    color.colorDictToArray(colorShifter.color, uiData.get("alphaValue")),
-    gpuApp,
-  );
+  const colorModel = ColorModel.fromDict({
+    r: 0.75,
+    g: 0.25,
+    b: 0.25,
+    a: uiData.get("alphaValue"),
+  });
+  colorModel.asUniform(gpuApp.device);
+  const colorShifter = new ColorShifter(colorModel);
 
   const backgroundPipeline = gpuApp.setupRendering(backgroundShaders, [
-    colorUniform,
+    colorModel,
   ]);
   backgroundPipeline.overrideVertexCount(6);
 
   gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-    colorUniform.data = color.colorDictToArray(
-      colorShifter.update(),
-      uiData.get("alphaValue"),
-    );
+    colorShifter.update(uiData.get("alphaValue"));
   });
 };
 
@@ -36,14 +39,17 @@ export const renderBackgroundRectangleWithTriangle = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const colorShifter = new ColorShifter();
-  const colorUniform = new Uniform(
-    color.colorDictToArray(colorShifter.color, uiData.get("alphaValue")),
-    gpuApp,
-  );
+  const colorModel = ColorModel.fromDict({
+    r: 0.25,
+    g: 0.25,
+    b: 0.75,
+    a: uiData.get("alphaValue"),
+  });
+  colorModel.asUniform(gpuApp.device);
+  const colorShifter = new ColorShifter(colorModel);
 
   const backgroundPipeline = gpuApp.setupRendering(backgroundShaders, [
-    colorUniform,
+    colorModel,
   ]);
   backgroundPipeline.overrideVertexCount(6);
 
@@ -52,9 +58,6 @@ export const renderBackgroundRectangleWithTriangle = (
 
   gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-    colorUniform.data = color.colorDictToArray(
-      colorShifter.update(),
-      uiData.get("alphaValue"),
-    );
+    colorShifter.update(uiData.get("alphaValue"));
   });
 };

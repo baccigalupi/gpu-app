@@ -1,5 +1,3 @@
-import type { GpuApp } from "../facade";
-
 type TypedArrayClass =
   | Int8ArrayConstructor
   | Uint8ArrayConstructor
@@ -15,7 +13,6 @@ const defaultArrayType = Float32Array;
 export class Uniform {
   data: number[];
   arrayType: TypedArrayClass;
-  gpuApp: GpuApp;
   device: GPUDevice;
   label: string;
   offset: number;
@@ -23,12 +20,11 @@ export class Uniform {
 
   constructor(
     data: number[],
-    gpuApp: GpuApp,
+    device: GPUDevice,
     options: { arrayType?: TypedArrayClass; label?: string } = {},
   ) {
     this.data = data;
-    this.gpuApp = gpuApp;
-    this.device = gpuApp.device;
+    this.device = device;
     this.arrayType = options.arrayType || defaultArrayType;
     this.label = options.label || "uniform buffer";
     this.offset = 0;

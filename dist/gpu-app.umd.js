@@ -264,7 +264,7 @@
       e.writeToGpu();
       const i = this.device.createBindGroup({
         layout: this.pipeline.getBindGroupLayout(0),
-        entries: [{ binding: 0, resource: { buffer: e.buffer() } }],
+        entries: [{ binding: 0, resource: { buffer: e.gpuBuffer() } }],
       });
       this.passEncoder.setBindGroup(0, i);
     }

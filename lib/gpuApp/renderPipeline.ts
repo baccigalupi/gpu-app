@@ -52,18 +52,18 @@ export class RenderPipeline {
     this.passEncoder.setPipeline(this.pipeline);
   }
 
-  // TODO: currently static and just sets the one uniform. What I am dreaming of
-  // is that the models can know what bind group they should live in, based on
-  // convention. Then the model can writeToGpu and also return an entry for the
-  // bind group here.
+  // TODO: currently only sets one bind group
   setupBindGroups() {
     if (!this.models.length) return;
 
-    const uniform = this.models[0];
-    uniform.writeToGpu();
+    this.models.forEach((model) => model.writeToGpu());
+
+    const entries = this.models.map((model, index) =>
+      model.bindGroupEntry(index),
+    );
     const uniformsBindGroup = this.device.createBindGroup({
       layout: this.pipeline.getBindGroupLayout(0),
-      entries: [{ binding: 0, resource: { buffer: uniform.buffer() } }],
+      entries: entries,
     });
 
     this.passEncoder.setBindGroup(0, uniformsBindGroup);
