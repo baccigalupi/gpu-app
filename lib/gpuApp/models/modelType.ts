@@ -1,8 +1,10 @@
+export type BindGroupEntry = {
+  binding: number;
+  resource: { buffer: GPUBuffer };
+};
+
 export type Model = {
   gpuBuffer: () => GPUBuffer;
   writeToGpu: () => void;
-  bindGroupEntry: (index: number) => {
-    binding: number;
-    resource: { buffer: GPUBuffer };
-  };
+  bindGroupEntry: (index: number) => BindGroupEntry;
 };

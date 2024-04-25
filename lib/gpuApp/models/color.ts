@@ -1,4 +1,4 @@
-import { vec4, vec3 } from "webgpu-matrix";
+import { vec4 } from "webgpu-matrix";
 import { AsUniform } from "./buffers/asUniform";
 import { Model } from "./modelType";
 import { hexToDecimal } from "../color";
@@ -37,7 +37,7 @@ export class ColorModel implements Model {
     return this.data[3];
   }
   get rgb() {
-    return vec3.create(this.r, this.g, this.b);
+    return [this.r, this.g, this.b];
   }
 
   set r(value: number) {

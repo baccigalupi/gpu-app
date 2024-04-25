@@ -1,6 +1,6 @@
 # TODO
 
-- Multiple pipelines at work
+- Bug: window resize not working
 - Experiment: background rendered had triangle too. Is it really blending?
-  - Do I need to look into blending modes too?
-  - Does that work with the background attachment too?
+  - Does blending work with the background attachment too?
+  - Does blended layers need to be premultiplied too?
