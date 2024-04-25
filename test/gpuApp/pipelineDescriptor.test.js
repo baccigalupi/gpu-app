@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { pipelineDescriptor } from "../../lib/gpuApp/pipelineDescriptor";
 import { GpuApp } from "../../lib/gpuApp/facade";
+import { ColorModel } from "../../lib/gpuApp/models/color";
 
 describe("getPipelineDescriptor", () => {
   const shaders = ["code1", "code2", "code3"];
@@ -39,11 +40,6 @@ describe("getPipelineDescriptor", () => {
 
       expect(descriptor.vertex.entryPoint).toEqual("main");
     });
-
-    it.skip("when configured with a buffer descriptor, includes it", () => {
-      const builder = pipelineDescriptor(gpuApp, shaders);
-      // builder.addBuffer();
-    });
   });
 
   describe("fragment", () => {
@@ -73,6 +69,24 @@ describe("getPipelineDescriptor", () => {
       expect(descriptor.fragment.targets).toEqual([
         { format: "canvas textureFormat" },
       ]);
+    });
+
+    it.only("includes translucency blend configuration, when blend mode is set that way", () => {
+      const builder = pipelineDescriptor(gpuApp, shaders, "translucent");
+      const descriptor = builder.build();
+
+      expect(descriptor.fragment.targets[0].blend).toEqual({
+        color: {
+          operation: "add",
+          srcFactor: "src-alpha",
+          dstFactor: "one-minus-src-alpha",
+        },
+        alpha: {
+          operation: "add",
+          srcFactor: "zero",
+          dstFactor: "one",
+        },
+      });
     });
   });
 

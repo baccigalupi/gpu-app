@@ -11,5 +11,5 @@ fn vertex_entry(@builtin(vertex_index) index : u32) -> @builtin(position) vec4f 
 
 @fragment
 fn fragment_entry() -> @location(0) vec4f {
-  return premultiply(vec4f(0.25, 0.95, 0.25, 0.5));
+  return premultiply(vec4f(1.0, 0.0, 0.0, 0.75));
 }

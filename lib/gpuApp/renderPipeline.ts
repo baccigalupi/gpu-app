@@ -3,6 +3,8 @@ import type { Renderer } from "./renderer";
 import type { Shaders } from "./shader";
 import { pipelineDescriptor } from "./pipelineDescriptor";
 
+export type BlendMode = "translucent" | "default";
+
 export class RenderPipeline {
   gpuApp: GpuApp;
   renderer: Renderer;
@@ -10,6 +12,7 @@ export class RenderPipeline {
   shaders: Shaders;
   vertexCount: number;
   models: any[];
+  blendMode: BlendMode;
 
   // Set per frame
   pipeline!: GPURenderPipeline;
@@ -22,6 +25,7 @@ export class RenderPipeline {
     this.shaders = shaders;
     this.vertexCount = 0;
     this.models = [];
+    this.blendMode = "default";
   }
 
   overrideVertexCount(count: number) {
@@ -45,7 +49,11 @@ export class RenderPipeline {
   }
 
   buildDescriptor() {
-    return pipelineDescriptor(this.gpuApp, this.shaders).build();
+    return pipelineDescriptor(
+      this.gpuApp,
+      this.shaders,
+      this.blendMode,
+    ).build();
   }
 
   addPipeline() {
@@ -67,6 +75,10 @@ export class RenderPipeline {
     });
 
     this.passEncoder.setBindGroup(0, uniformsBindGroup);
+  }
+
+  blend(blendMode: BlendMode) {
+    this.blendMode = blendMode;
   }
 
   // TODO: vertex count should be dynamically generated so that we can look at

@@ -1,21 +1,27 @@
 import { vec4, vec3 } from "webgpu-matrix";
-import { Vec4 } from "./matrixTypes";
 import { AsUniform } from "./buffers/asUniform";
 import { Model } from "./modelType";
+import { hexToDecimal } from "../color";
 
 export class ColorModel implements Model {
-  premultiplied: boolean;
   translation!: AsUniform;
-  data: Vec4;
+  data: number[];
 
-  constructor(data: Vec4) {
+  constructor(data: number[]) {
     this.data = data;
-    this.premultiplied = false;
   }
 
   static fromDict(color: GPUColorDict) {
-    const data = vec4.create(color.r, color.g, color.b, color.a);
+    return new ColorModel([color.r, color.g, color.b, color.a]);
+  }
+
+  static fromHex(hex: string, { alpha } = { alpha: 1.0 }) {
+    const data = [...hexToDecimal(hex), alpha];
     return new ColorModel(data);
+  }
+
+  static fromDecimals(r: number, g: number, b: number, a = 1.0) {
+    return new ColorModel([r, g, b, a]);
   }
 
   get r() {
@@ -56,8 +62,12 @@ export class ColorModel implements Model {
     this.b = b;
   }
 
+  toVector() {
+    return vec4.create(this.r, this.g, this.b, this.a);
+  }
+
   asUniform(device: GPUDevice) {
-    this.translation = new AsUniform(this.data, device);
+    this.translation = new AsUniform(this.toVector(), device);
   }
 
   writeToGpu() {

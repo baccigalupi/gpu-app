@@ -1,4 +1,5 @@
 import type { GpuApp } from "./facade";
+import { BlendMode } from "./renderPipeline";
 import type { Shaders } from "./shader";
 
 export type EntryOptions = {
@@ -41,14 +42,20 @@ export class PipelineDescriptor {
   entryOptions: EntryOptions;
   buffers: GPUVertexBufferLayout[];
   shaders: Shaders;
+  blendMode: BlendMode;
 
-  constructor(gpuApp: GpuApp, shaders: Shaders) {
+  constructor(
+    gpuApp: GpuApp,
+    shaders: Shaders,
+    blendMode: BlendMode = "default",
+  ) {
     this.gpuApp = gpuApp;
     this.depthTesting = false;
     this.depthTestingOptions = defaultDepthTestingOptions;
     this.entryOptions = defaultEntryOptions;
     this.buffers = [] as GPUVertexBufferLayout[];
     this.shaders = shaders;
+    this.blendMode = blendMode;
   }
 
   build(): GPURenderPipelineDescriptor {
@@ -100,7 +107,32 @@ export class PipelineDescriptor {
     return {
       module,
       entryPoint: this.entryOptions.fragment,
-      targets: [{ format: this.gpuApp.getFormat() }],
+      targets: [
+        {
+          format: this.gpuApp.getFormat(),
+          ...this.blendDescriptor(),
+        },
+      ],
+    };
+  }
+
+  blendDescriptor() {
+    if (this.blendMode === "default") return {};
+
+    // translucent
+    return {
+      blend: {
+        color: {
+          operation: "add",
+          srcFactor: "src-alpha",
+          dstFactor: "one-minus-src-alpha",
+        },
+        alpha: {
+          operation: "add",
+          srcFactor: "zero",
+          dstFactor: "one",
+        },
+      },
     };
   }
 
@@ -117,6 +149,10 @@ export class PipelineDescriptor {
   }
 }
 
-export const pipelineDescriptor = (gpuApp: GpuApp, shaders: Shaders) => {
-  return new PipelineDescriptor(gpuApp, shaders);
+export const pipelineDescriptor = (
+  gpuApp: GpuApp,
+  shaders: Shaders,
+  blendMode: BlendMode = "default",
+) => {
+  return new PipelineDescriptor(gpuApp, shaders, blendMode);
 };
