@@ -2,6 +2,8 @@ import type { GpuApp } from "../../lib/gpuApp/facade";
 import type { UiData } from "../ui/uiData";
 import { shaders as gpuShaders } from "../../lib/gpuApp/shaders";
 import { ColorModel } from "../../lib/gpuApp/models/color";
+import { point } from "../../lib/gpuApp/models/point";
+import { quad } from "../../lib/gpuApp/models/quad";
 import { ColorShifter } from "../shared/colorModelShifter";
 
 import backgroundShader from "./background.wgsl?raw";
@@ -14,13 +16,7 @@ export const renderBackgroundRectangleInGpu = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const colorModel = ColorModel.fromDict({
-    r: 0.75,
-    g: 0.25,
-    b: 0.25,
-    a: uiData.get("alphaValue"),
-  });
-
+  const colorModel = ColorModel.fromDecimals(0.75, 0.25, 0.25, uiData.get("alphaValue"));
   colorModel.asUniform(gpuApp.device);
   const colorShifter = new ColorShifter(colorModel);
 
@@ -39,18 +35,19 @@ export const renderBackgroundRectangleWithTriangle = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const colorModel = ColorModel.fromDict({
-    r: 0.25,
-    g: 0.25,
-    b: 0.25,
-    a: 0.95,
-  });
-  colorModel.asUniform(gpuApp.device);
+  const backgroundColor = ColorModel.fromDecimals(0.25, 0.25, 0.25, uiData.get("alphaValue"));
+  backgroundColor.asUniform(gpuApp.device);
 
-  // const colorShifter = new ColorShifter(colorModel);
+  const background = quad(
+    point(-1, -1),
+    point(1, -1),
+    point(1, 1),
+    point(-1, 1),
+  );
+  // background.asVertex(gpuApp.device);
 
   const backgroundPipeline = gpuApp.setupRendering(backgroundShaders, [
-    colorModel,
+    backgroundColor,
   ]);
   backgroundPipeline.overrideVertexCount(6);
 
@@ -60,7 +57,6 @@ export const renderBackgroundRectangleWithTriangle = (
 
   gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-
-    // colorShifter.update(uiData.get("alphaValue"));
+    backgroundColor.a = uiData.get("alphaValue");
   });
 };

@@ -36,7 +36,9 @@ export class AsUniform {
     );
   }
 
-  bindGroupEntry(index: number) {
-    return { binding: index, resource: { buffer: this.gpuBuffer() } };
+  bindGroupEntries(startingIndex: number) {
+    return [
+      { binding: startingIndex, resource: { buffer: this.gpuBuffer() } }
+    ];
   }
 }

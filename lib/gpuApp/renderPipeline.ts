@@ -2,6 +2,7 @@ import type { GpuApp } from "./facade";
 import type { Renderer } from "./renderer";
 import type { Shaders } from "./shader";
 import { pipelineDescriptor } from "./pipelineDescriptor";
+import { BindGroupEntry, Model } from "./models/modelType";
 
 export type BlendMode = "translucent" | "default";
 
@@ -66,15 +67,18 @@ export class RenderPipeline {
 
     this.models.forEach((model) => model.writeToGpu());
 
-    const entries = this.models.map((model, index) =>
-      model.bindGroupEntry(index),
-    );
-    const uniformsBindGroup = this.device.createBindGroup({
+    const entries = this.models.reduce((collection, model: Model) => {
+      const index = collection.length;
+      return collection.concat(model.bindGroupEntries(index));
+    }, [] as BindGroupEntry[]);
+
+
+    const bindGroup = this.device.createBindGroup({
       layout: this.pipeline.getBindGroupLayout(0),
       entries: entries,
     });
 
-    this.passEncoder.setBindGroup(0, uniformsBindGroup);
+    this.passEncoder.setBindGroup(0, bindGroup);
   }
 
   blend(blendMode: BlendMode) {

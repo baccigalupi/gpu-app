@@ -78,7 +78,7 @@ export class ColorModel implements Model {
     return this.translation.gpuBuffer();
   }
 
-  bindGroupEntry(index: number) {
-    return this.translation.bindGroupEntry(index);
+  bindGroupEntries(index: number) {
+    return this.translation.bindGroupEntries(index);
   }
 }

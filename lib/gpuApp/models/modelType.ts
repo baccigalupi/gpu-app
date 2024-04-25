@@ -4,7 +4,6 @@ export type BindGroupEntry = {
 };
 
 export type Model = {
-  gpuBuffer: () => GPUBuffer;
   writeToGpu: () => void;
-  bindGroupEntry: (index: number) => BindGroupEntry;
+  bindGroupEntries: (startingIndex: number) => BindGroupEntry[];
 };
