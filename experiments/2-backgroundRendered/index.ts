@@ -16,7 +16,7 @@ export const renderBackgroundRectangleInGpu = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const backgroundColor = ColorModel.fromDecimals(1, 1, 1, uiData.get("alphaValue"));
+  const backgroundColor = ColorModel.named("White", uiData.get("alphaValue"));
   backgroundColor.asUniform(gpuApp.device);
 
   const backgroundPipeline = gpuApp.addPipeline(backgroundShaders, [

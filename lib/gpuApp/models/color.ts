@@ -2,7 +2,7 @@ import type { Vec4 } from "./matrixTypes";
 import { vec4 } from "webgpu-matrix";
 import { AsUniform } from "./buffers/asUniform";
 import { Model } from "./modelType";
-import { hexToDecimal } from "../color";
+import { hexToDecimal, getNamedColor } from "../color";
 
 export class ColorModel implements Model {
   translation!: AsUniform;
@@ -24,6 +24,11 @@ export class ColorModel implements Model {
   static fromDecimals(r: number, g: number, b: number, a = 1.0) {
     return new ColorModel([r, g, b, a]);
   }
+  
+  static named(name: string, { alpha } = { alpha: 1.0 }) {
+    const hex = getNamedColor(name);
+    return ColorModel.fromHex(hex, { alpha });
+  } 
 
   get r() {
     return this.data[0];
