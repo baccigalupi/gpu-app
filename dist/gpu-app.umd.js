@@ -435,7 +435,7 @@
     setBackgroundColor(e) {
       this.renderer.setBackgroundColor(e);
     }
-    setupRendering(e, i) {
+    addPipeline(e, i) {
       return this.renderer.addPipeline({ shaders: e, models: i });
     }
     render(e = o) {

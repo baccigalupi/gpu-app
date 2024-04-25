@@ -457,7 +457,7 @@ class R {
   setBackgroundColor(e) {
     this.renderer.setBackgroundColor(e);
   }
-  setupRendering(e, s) {
+  addPipeline(e, s) {
     return this.renderer.addPipeline({ shaders: e, models: s });
   }
   render(e = n) {

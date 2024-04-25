@@ -72,7 +72,7 @@ const app = await gpuApp({ parentSelector: "#canvas-container" });
 const backgroundColor = premuliply({ r: 0.95, g: 0.25, b: 0.25, a: 0.5 });
 
 app.setBackgroundColor(backgroundColor);
-app.setupRendering(shader);
+app.addPipeline(shader);
 app.render();
 ```
 
@@ -207,7 +207,7 @@ const backgroundChanger = () => {
 const app = await gpuApp({ parentSelector: "#canvas-container" });
 
 app.setBackgroundColor(backgroundChanger());
-app.setupRendering(shader);
+app.addPipeline(shader);
 app.render(() => backgroundChanger());
 ```
 
@@ -256,7 +256,7 @@ import triangleShader from "./staticTriangle.wgsl?raw";
 
 const shaders = [premultiplyShader, triangleShader];
 gpuApp.setBackgroundColor(backgroundColor);
-const pipeline = gpuApp.setupRendering(shaders);
+const pipeline = gpuApp.addPipeline(shaders);
 pipeline.overrideVertexCount(3);
 gpuApp.render();
 ```

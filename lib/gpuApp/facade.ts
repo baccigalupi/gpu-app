@@ -76,7 +76,7 @@ export class GpuApp {
     this.renderer.setBackgroundColor(color);
   }
 
-  setupRendering(shaders: Shaders, models?: any[]) {
+  addPipeline(shaders: Shaders, models?: any[]) {
     return this.renderer.addPipeline({ shaders, models });
   }
 

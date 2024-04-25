@@ -1,3 +1,4 @@
+import type { Vec4 } from "./matrixTypes";
 import { vec4 } from "webgpu-matrix";
 import { AsUniform } from "./buffers/asUniform";
 import { Model } from "./modelType";
@@ -5,10 +6,10 @@ import { hexToDecimal } from "../color";
 
 export class ColorModel implements Model {
   translation!: AsUniform;
-  data: number[];
+  data: Vec4;
 
   constructor(data: number[]) {
-    this.data = data;
+    this.data = vec4.create(...data);
   }
 
   static fromDict(color: GPUColorDict) {
@@ -62,12 +63,8 @@ export class ColorModel implements Model {
     this.b = b;
   }
 
-  toVector() {
-    return vec4.create(this.r, this.g, this.b, this.a);
-  }
-
   asUniform(device: GPUDevice) {
-    this.translation = new AsUniform(this.toVector(), device);
+    this.translation = new AsUniform(this.data, device);
   }
 
   writeToGpu() {

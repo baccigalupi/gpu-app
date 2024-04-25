@@ -15,7 +15,7 @@ export const renderBackgroundOnlyStatic = (gpuApp: GpuApp, uiData: UiData) => {
   };
 
   gpuApp.setBackgroundColor(backgroundColor());
-  gpuApp.setupRendering(shaders);
+  gpuApp.addPipeline(shaders);
   gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
     renderer.backgroundColor = backgroundColor();
@@ -29,7 +29,7 @@ export const renderBackgroundOnly = (gpuApp: GpuApp, uiData: UiData) => {
   };
 
   gpuApp.setBackgroundColor(backgroundColor());
-  gpuApp.setupRendering(shaders);
+  gpuApp.addPipeline(shaders);
   gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
     colorShifter.update(uiData.get("alphaValue"));
@@ -44,7 +44,7 @@ export const renderBackgroundAndTriangle = (gpuApp: GpuApp, uiData: UiData) => {
   };
 
   gpuApp.setBackgroundColor(backgroundColor());
-  const pipeline = gpuApp.setupRendering(shaders);
+  const pipeline = gpuApp.addPipeline(shaders);
   pipeline.overrideVertexCount(3);
 
   gpuApp.render((renderer) => {

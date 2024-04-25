@@ -16,18 +16,17 @@ export const renderBackgroundRectangleInGpu = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const colorModel = ColorModel.fromDecimals(0.75, 0.25, 0.25, uiData.get("alphaValue"));
-  colorModel.asUniform(gpuApp.device);
-  const colorShifter = new ColorShifter(colorModel);
+  const backgroundColor = ColorModel.fromDecimals(1, 1, 1, uiData.get("alphaValue"));
+  backgroundColor.asUniform(gpuApp.device);
 
-  const backgroundPipeline = gpuApp.setupRendering(backgroundShaders, [
-    colorModel,
+  const backgroundPipeline = gpuApp.addPipeline(backgroundShaders, [
+    backgroundColor,
   ]);
   backgroundPipeline.overrideVertexCount(6);
 
   gpuApp.render((renderer) => {
     uiData.update("frameRate", renderer.frame.rate);
-    colorShifter.update(uiData.get("alphaValue"));
+    backgroundColor.a = uiData.get("alphaValue");
   });
 };
 
@@ -35,7 +34,7 @@ export const renderBackgroundRectangleWithTriangle = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const backgroundColor = ColorModel.fromDecimals(0.25, 0.25, 0.25, uiData.get("alphaValue"));
+  const backgroundColor = ColorModel.fromDecimals(1, 1, 1, uiData.get("alphaValue"));
   backgroundColor.asUniform(gpuApp.device);
 
   const background = quad(
@@ -44,14 +43,14 @@ export const renderBackgroundRectangleWithTriangle = (
     point(1, 1),
     point(-1, 1),
   );
-  // background.asVertex(gpuApp.device);
+  background.asVertex(gpuApp.device);
 
-  const backgroundPipeline = gpuApp.setupRendering(backgroundShaders, [
+  const backgroundPipeline = gpuApp.addPipeline(backgroundShaders, [
     backgroundColor,
   ]);
   backgroundPipeline.overrideVertexCount(6);
 
-  const trianglePipeline = gpuApp.setupRendering(triangleShaders);
+  const trianglePipeline = gpuApp.addPipeline(triangleShaders);
   trianglePipeline.overrideVertexCount(3);
   trianglePipeline.blend("translucent");
 
