@@ -30,11 +30,13 @@ export class AsVertexWithIndex {
     const vertexBuffer = this.device.createBuffer({
       size: this.points.length * this.points.byteLength,
       usage: VEREX_USAGE,
+      label: "vertex",
     });
 
     const indexBuffer = this.device.createBuffer({
       size: this.indexes.length * this.indexes.byteLength,
       usage: INDEX_USAGE,
+      label: "index"
     });
 
     this.gpuBuffers = [

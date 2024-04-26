@@ -2,7 +2,8 @@ import type { GpuApp } from "./facade";
 import type { Renderer } from "./renderer";
 import type { Shaders } from "./shader";
 import { pipelineDescriptor } from "./pipelineDescriptor";
-import { BindGroupEntry, Model } from "./models/modelType";
+import { Model } from "./model";
+import { Buffer, BindGroupEntry } from "./models/buffer";
 
 export type BlendMode = "translucent" | "default";
 
@@ -12,12 +13,13 @@ export class RenderPipeline {
   device: GPUDevice;
   shaders: Shaders;
   vertexCount: number;
-  models: any[];
+  models: Model[];
   blendMode: BlendMode;
 
   // Set per frame
   pipeline!: GPURenderPipeline;
   passEncoder!: GPURenderPassEncoder;
+  private _buffers!: Buffer[];
 
   constructor(gpuApp: GpuApp, renderer: Renderer, shaders: Shaders) {
     this.renderer = renderer;
@@ -61,21 +63,40 @@ export class RenderPipeline {
     this.passEncoder.setPipeline(this.pipeline);
   }
 
+  get buffers() {
+    if (this._buffers) return this._buffers;
+    
+    this._buffers = this.models.reduce((collection, model) => {
+      return collection.concat(model.buffers(this.device));
+    }, [] as Buffer[]);
+
+    return this._buffers;
+  }
+
+  writeBuffers() {
+    this.buffers.forEach((buffer: Buffer) => buffer.write());
+  }
+
+  bufferEntries() {
+    return this.buffers.reduce((collection, buffer: Buffer) => {
+      const index = collection.length;
+      const entry = buffer.descriptor(index);
+      if (entry) {
+        collection = collection.concat(entry);
+      }
+      return collection;
+    }, [] as BindGroupEntry[]);
+  }
+
   // TODO: currently only sets one bind group
   setupBindGroups() {
     if (!this.models.length) return;
 
-    this.models.forEach((model) => model.writeToGpu());
-
-    const entries = this.models.reduce((collection, model: Model) => {
-      const index = collection.length;
-      return collection.concat(model.bindGroupEntries(index));
-    }, [] as BindGroupEntry[]);
-
+    this.writeBuffers();
 
     const bindGroup = this.device.createBindGroup({
       layout: this.pipeline.getBindGroupLayout(0),
-      entries: entries,
+      entries: this.bufferEntries(),
     });
 
     this.passEncoder.setBindGroup(0, bindGroup);

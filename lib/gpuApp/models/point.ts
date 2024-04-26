@@ -1,6 +1,6 @@
 import { vec4 } from "webgpu-matrix";
 import { AsUniform } from "./buffers/asUniform";
-import { Model } from "./modelType";
+import { Model } from "../model";
 
 export class Point implements Model {
   translation!: AsUniform;
@@ -52,8 +52,8 @@ export class Point implements Model {
     return this.translation.gpuBuffer();
   }
 
-  bindGroupEntry(index: number) {
-    return this.translation.bindGroupEntry(index);
+  bindGroupEntries(index: number) {
+    return this.translation.bindGroupEntries(index);
   }
 }
 

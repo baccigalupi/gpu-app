@@ -1,12 +1,14 @@
-import type { Vec4 } from "./matrixTypes";
 import { vec4 } from "webgpu-matrix";
-import { AsUniform } from "./buffers/asUniform";
-import { Model } from "./modelType";
+import type { Vec4 } from "./matrixTypes";
+import type { Model } from "../model";
+import type { Buffer, BufferClass } from "./buffer";
 import { hexToDecimal, getNamedColor } from "../color";
+import { Uniform } from "./buffers/uniform";
 
 export class ColorModel implements Model {
-  translation!: AsUniform;
   data: Vec4;
+  private bufferClass!: BufferClass;
+  private _buffers!: Buffer[];
 
   constructor(data: number[]) {
     this.data = vec4.create(...data);
@@ -68,19 +70,17 @@ export class ColorModel implements Model {
     this.b = b;
   }
 
-  asUniform(device: GPUDevice) {
-    this.translation = new AsUniform(this.data, device);
+  asUniform() {
+    this.bufferClass = Uniform;
   }
 
-  writeToGpu() {
-    this.translation.writeToGpu();
-  }
+  buffers(device: GPUDevice) {
+    if (this._buffers) return this._buffers;
 
-  gpuBuffer() {
-    return this.translation.gpuBuffer();
-  }
+    this._buffers = [
+      new this.bufferClass(this.data, device)
+    ];
 
-  bindGroupEntries(index: number) {
-    return this.translation.bindGroupEntries(index);
+    return this._buffers;
   }
 }

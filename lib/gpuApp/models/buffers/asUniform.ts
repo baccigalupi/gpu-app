@@ -23,6 +23,7 @@ export class AsUniform {
     this._gpuBuffer = this.device.createBuffer({
       size: this.data.length * this.data.byteLength,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      label: "uniform"
     });
 
     return this._gpuBuffer;

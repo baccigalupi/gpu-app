@@ -1,5 +1,5 @@
 import type { Point } from "./point";
-import type { Model } from "./modelType";
+import type { Model } from "../model";
 import { AsVertexWithIndex } from "./buffers/asVertexWithIndex";
 
 const POINT_LENGTH = 4;

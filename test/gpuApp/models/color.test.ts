@@ -43,11 +43,10 @@ describe("ColorModel", () => {
     });
   });
 
-  it("toVector returns a vec4 of the data", () => {
+  it("the data is stored as a vec4", () => {
     const color = ColorModel.fromDecimals(0.4, 0.5, 0.6, 0.7);
-    const vector = color.toVector();
 
-    expect(vector).toBeInstanceOf(Float32Array);
-    expect(vector.length).toEqual(4);
+    expect(color.data).toBeInstanceOf(Float32Array);
+    expect(color.data.length).toEqual(4);
   });
 });
