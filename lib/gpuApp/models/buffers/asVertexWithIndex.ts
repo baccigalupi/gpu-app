@@ -36,26 +36,19 @@ export class AsVertexWithIndex {
     const indexBuffer = this.device.createBuffer({
       size: this.indexes.length * this.indexes.byteLength,
       usage: INDEX_USAGE,
-      label: "index"
+      label: "index",
     });
 
-    this.gpuBuffers = [
-      vertexBuffer,
-      indexBuffer
-    ];
+    this.gpuBuffers = [vertexBuffer, indexBuffer];
 
-    return this.gpuBuffers
+    return this.gpuBuffers;
   }
 
   writeToGpu() {
     this.buffers().forEach((buffer: GPUBuffer) => {
       const data = this.getData(buffer.usage);
 
-      this.device.queue.writeBuffer(
-        buffer,
-        this.offset,
-        data.buffer,
-      );
+      this.device.queue.writeBuffer(buffer, this.offset, data.buffer);
     });
   }
 
@@ -71,8 +64,8 @@ export class AsVertexWithIndex {
     const buffers = this.buffers();
 
     return [
-      { binding: startingIndex, resource: { buffer: buffers[0]} },
-      { binding: startingIndex + 1, resource: { buffer: buffers[1] }},
-    ]
+      { binding: startingIndex, resource: { buffer: buffers[0] } },
+      { binding: startingIndex + 1, resource: { buffer: buffers[1] } },
+    ];
   }
 }

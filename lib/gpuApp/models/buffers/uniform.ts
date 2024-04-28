@@ -8,6 +8,6 @@ export class Uniform extends BufferBase implements BufferBindGroupDescriptor {
   }
 
   descriptor(index: number) {
-    return { binding: index, resource: { buffer: this.deviceBuffer } }
+    return { binding: index, resource: { buffer: this.deviceBuffer } };
   }
 }

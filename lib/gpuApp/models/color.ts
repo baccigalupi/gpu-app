@@ -26,11 +26,11 @@ export class ColorModel implements Model {
   static fromDecimals(r: number, g: number, b: number, a = 1.0) {
     return new ColorModel([r, g, b, a]);
   }
-  
+
   static named(name: string, { alpha } = { alpha: 1.0 }) {
     const hex = getNamedColor(name);
     return ColorModel.fromHex(hex, { alpha });
-  } 
+  }
 
   get r() {
     return this.data[0];
@@ -77,9 +77,7 @@ export class ColorModel implements Model {
   buffers(device: GPUDevice) {
     if (this._buffers) return this._buffers;
 
-    this._buffers = [
-      new this.bufferClass(this.data, device)
-    ];
+    this._buffers = [new this.bufferClass(this.data, device)];
 
     return this._buffers;
   }

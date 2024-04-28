@@ -23,7 +23,7 @@ export class AsUniform {
     this._gpuBuffer = this.device.createBuffer({
       size: this.data.length * this.data.byteLength,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-      label: "uniform"
+      label: "uniform",
     });
 
     return this._gpuBuffer;
@@ -38,8 +38,6 @@ export class AsUniform {
   }
 
   bindGroupEntries(startingIndex: number) {
-    return [
-      { binding: startingIndex, resource: { buffer: this.gpuBuffer() } }
-    ];
+    return [{ binding: startingIndex, resource: { buffer: this.gpuBuffer() } }];
   }
 }

@@ -1,8 +1,7 @@
 import { vec4 } from "webgpu-matrix";
 import { AsUniform } from "./buffers/asUniform";
-import { Model } from "../model";
 
-export class Point implements Model {
+export class Point {
   translation!: AsUniform;
   data: number[];
 
@@ -39,22 +38,10 @@ export class Point implements Model {
   toVector() {
     return vec4.create(this.x, this.y, this.z, 1);
   }
-
-  asUniform(device: GPUDevice) {
-    this.translation = new AsUniform(this.toVector(), device);
-  }
-
-  writeToGpu() {
-    this.translation.writeToGpu();
-  }
-
-  gpuBuffer() {
-    return this.translation.gpuBuffer();
-  }
-
-  bindGroupEntries(index: number) {
-    return this.translation.bindGroupEntries(index);
-  }
 }
 
-export const point = (x: number, y: number, z: number = -1) => Point.create(x, y, z);
+export const point = (x: number, y: number, z: number = 0) =>
+  Point.create(x, y, z);
+
+export const dimension = point;
+export type Dimension = Point;

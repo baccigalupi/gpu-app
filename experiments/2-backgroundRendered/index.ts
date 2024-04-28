@@ -23,7 +23,7 @@ export const renderBackgroundRectangleInGpu = (
     point(1, 1),
     point(-1, 1),
   );
-  backgroundShape.asVertex(gpuApp.device);
+  // backgroundShape.p1x += 0.1;
 
   const backgroundPipeline = gpuApp.addPipeline(backgroundShaders, [
     // backgroundShape,
@@ -41,16 +41,13 @@ export const renderBackgroundRectangleWithTriangle = (
   gpuApp: GpuApp,
   uiData: UiData,
 ) => {
-  const backgroundColor = ColorModel.fromDecimals(1, 1, 1, uiData.get("alphaValue"));
-  backgroundColor.asUniform(gpuApp.device);
-
-  const backgroundShape = quad(
-    point(-1, -1),
-    point(1, -1),
-    point(1, 1),
-    point(-1, 1),
+  const backgroundColor = ColorModel.fromDecimals(
+    1,
+    1,
+    1,
+    uiData.get("alphaValue"),
   );
-  backgroundShape.asVertex(gpuApp.device);
+  backgroundColor.asUniform();
 
   const backgroundPipeline = gpuApp.addPipeline(backgroundShaders, [
     backgroundColor,

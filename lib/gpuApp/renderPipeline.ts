@@ -65,7 +65,7 @@ export class RenderPipeline {
 
   get buffers() {
     if (this._buffers) return this._buffers;
-    
+
     this._buffers = this.models.reduce((collection, model) => {
       return collection.concat(model.buffers(this.device));
     }, [] as Buffer[]);
