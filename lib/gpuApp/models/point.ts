@@ -22,6 +22,9 @@ export class Point {
   get z() {
     return this.data[2];
   }
+  get w() {
+    return 1;
+  }
 
   set x(value: number) {
     this.data[0] = value;
@@ -36,7 +39,11 @@ export class Point {
   }
 
   toVector() {
-    return vec4.create(this.x, this.y, this.z, 1);
+    return vec4.create(this.x, this.y, this.z, this.w);
+  }
+
+  equals(other: Point) {
+    return this.x === other.x && this.y === other.y && this.z === other.z;
   }
 }
 
@@ -45,3 +52,5 @@ export const point = (x: number, y: number, z: number = 0) =>
 
 export const dimension = point;
 export type Dimension = Point;
+export type Points = Point[];
+export const POINT_LENGTH = 4;
