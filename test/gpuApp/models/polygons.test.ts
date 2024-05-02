@@ -60,6 +60,26 @@ describe("polygons", () => {
       expect(background.vertices[14]).toBeCloseTo(0.5);
       expect(background.vertices[15]).toBeCloseTo(1);
     });
+
+    it.skip("stores indice for the renderable triangles correctly", () => {
+      const background = new Polygons();
+      background.add([
+        point(0.5, 0.5),
+        point(0.75, 0.5),
+        point(0.75, 0.25),
+        point(0.5, 0.25, 0.5),
+      ]);
+
+      expect(background.indices.length).toEqual(6);
+
+      expect(background.indices[0]).toEqual(0);
+      expect(background.indices[1]).toEqual(1);
+      expect(background.indices[2]).toEqual(2);
+
+      expect(background.indices[3]).toEqual(2);
+      expect(background.indices[4]).toEqual(3);
+      expect(background.indices[5]).toEqual(0);
+    });
   });
 
   describe("when the list is multiple polygons of different lengths", () => {
