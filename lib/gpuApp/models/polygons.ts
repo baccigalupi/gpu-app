@@ -1,23 +1,27 @@
-import { Point, Points, POINT_LENGTH } from "./point";
+import { Points } from "./point";
+import { PolygonStorage } from "./polygonStorage";
 import { Subgon } from "./subgon";
 
 export class Polygons {
   subgons: Subgon[];
+  storage: PolygonStorage;
   length: number;
+  calculated: boolean;
   private _vertices!: Float32Array;
   private _indices!: Int8Array;
-  calculated: boolean;
 
   constructor() {
     this.subgons = [] as Subgon[];
+    this.storage = new PolygonStorage();
     this.length = 0;
     this.calculated = false;
   }
 
   add(points: Points) {
-    this.length += 1;
-    this.subgons = this.subgons.concat(new Subgon(points));
     this.calculated = false;
+    this.length += 1;
+    const poly = this.storage.add(points);
+    this.subgons = this.subgons.concat(Subgon.fromStorage(this.storage, poly));
   }
 
   polygonAt(index: number) {
@@ -26,36 +30,13 @@ export class Polygons {
 
   get vertices() {
     if (this.calculated) return this._vertices;
-    this.recalculateStorage();
+    this._vertices = Float32Array.from(this.storage.vertices);
     return this._vertices;
   }
 
   get indices() {
     if (this.calculated) return this._indices;
-    this.recalculateStorage();
+    this._indices = Int8Array.from(this.storage.indices);
     return this._indices;
-  }
-
-  recalculateStorage() {
-    const storageLength = this.subgons.reduce(
-      (sum, polygon) => sum + polygon.length * POINT_LENGTH,
-      0,
-    );
-    this._vertices = new Float32Array(storageLength);
-
-    let index = 0;
-
-    this.subgons.forEach((polygon) => {
-      polygon.points.forEach((point: Point) => {
-        this._vertices[index] = point.x;
-        this._vertices[index + 1] = point.y;
-        this._vertices[index + 2] = point.z;
-        this._vertices[index + 3] = point.w;
-        index += 4;
-      });
-      polygon.resetStorage(this._vertices, index);
-    });
-
-    this.calculated = true;
   }
 }

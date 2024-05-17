@@ -1,19 +1,26 @@
 import { Points } from "./point";
+import { PolygonStorage } from "./polygonStorage";
+import { PolyParser } from "./polyParser";
 
 export class Subgon {
-  points: Points;
-  index: number;
-  storage!: Float32Array;
-  length: number;
+  points!: Points;
+  length!: number;
+  indices!: number[];
+  storage: PolygonStorage;
 
-  constructor(points: Points) {
-    this.points = points;
-    this.length = points.length;
-    this.index = 0;
+  constructor(storage: PolygonStorage) {
+    this.storage = storage;
   }
 
-  resetStorage(storage: Float32Array, index: number) {
-    this.storage = storage;
-    this.index = index;
+  static fromStorage(storage: PolygonStorage, parser: PolyParser) {
+    const poly = new Subgon(storage);
+    poly.extractDataFromParser(parser);
+    return poly;
+  }
+
+  extractDataFromParser(parser: PolyParser) {
+    this.points = parser.points;
+    this.length = this.points.length;
+    this.indices = parser.indices;
   }
 }

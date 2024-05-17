@@ -125,7 +125,7 @@ describe("polygons", () => {
       expect(poly.polygonAt(2).length).toEqual(5);
     });
 
-    it.skip("stores the underlying vertex data without duplicates", () => {
+    it("stores the underlying vertex data without duplicates", () => {
       const poly = new Polygons();
       poly.add([
         point(0.5, 0.5), // 0
@@ -146,18 +146,18 @@ describe("polygons", () => {
         point(1.0, 0.5), // 6
       ]);
 
-      expect(poly.vertices.length).toEqual(28);
+      const vertices = poly.vertices;
+      expect(vertices.length).toEqual(28);
 
-      expect(poly.vertices[14]).toBeCloseTo(0.5);
-      expect(poly.vertices[24]).toBeCloseTo(0.75);
-      expect(poly.vertices[25]).toBeCloseTo(0);
-      expect(poly.vertices[44]).toBeCloseTo(1);
-      expect(poly.vertices[45]).toBeCloseTo(0.5);
-
-      // what about duplicate points and indexes?
-      // I'd like the polygons to be able to transform themselves: translate, rotate, scale.
-      // Does each poly hold on to the point indexes?
+      expect(vertices[12]).toEqual(0.5);
+      expect(vertices[16]).toEqual(0.75);
+      expect(vertices[21]).toEqual(0.75);
+      expect(vertices[24]).toEqual(1);
+      expect(vertices[25]).toEqual(0.5);
     });
+
+    // I'd like the polygons to be able to transform themselves: translate, rotate, scale.
+    // Does each poly hold on to the point indexes?
 
     // it("stores the index data correctly");
   });
