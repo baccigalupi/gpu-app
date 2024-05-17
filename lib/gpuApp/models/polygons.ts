@@ -24,7 +24,7 @@ export class Polygons {
     this.subgons = this.subgons.concat(Subgon.fromStorage(this.storage, poly));
   }
 
-  polygonAt(index: number) {
+  at(index: number) {
     return this.subgons[index];
   }
 

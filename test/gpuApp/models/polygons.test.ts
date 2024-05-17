@@ -26,7 +26,7 @@ describe("polygons", () => {
         point(0.5, 0.25, 0.5),
       ]);
 
-      const poly = background.polygonAt(0);
+      const poly = background.at(0);
       expect(poly).toBeInstanceOf(Subgon);
       expect(poly.length).toEqual(4);
     });
@@ -120,9 +120,9 @@ describe("polygons", () => {
         point(1.0, 0.5),
       ]);
 
-      expect(poly.polygonAt(0).length).toEqual(4);
-      expect(poly.polygonAt(1).length).toEqual(3);
-      expect(poly.polygonAt(2).length).toEqual(5);
+      expect(poly.at(0).length).toEqual(4);
+      expect(poly.at(1).length).toEqual(3);
+      expect(poly.at(2).length).toEqual(5);
     });
 
     it("stores the underlying vertex data without duplicates", () => {
